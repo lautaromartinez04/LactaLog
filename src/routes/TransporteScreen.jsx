@@ -418,7 +418,8 @@ export const TransporteScreen = () => {
   const handleVerifyAnomaliaTransporte = (transporte) => {
     Swal.fire({
       title: 'Verificar Anomalía',
-      text: 'Ingrese una descripción para verificar la anomalía:',
+      text: `${transporte.ANOMALIA_OBSERVACION || 'Sin descripción'}
+      \n Ingrese una descripción para verificar la anomalía:`,
       input: 'text',
       inputPlaceholder: 'Descripción...',
       showCancelButton: true,
@@ -636,6 +637,7 @@ export const TransporteScreen = () => {
                         <i className="fas fa-info-circle" style={{ marginLeft: "5px", color: "#FFC107" }}></i>
                       </div>
                     ) : (
+                      <>
                       <button
                         className="btn btn-warning btn-sm mr-2"
                         style={{ cursor: "pointer", fontWeight: "bolder" }}
@@ -643,6 +645,9 @@ export const TransporteScreen = () => {
                       >
                         Verificar
                       </button>
+                      <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(transporte)} style={{ marginLeft: "5px", color: "#FFC107", cursor: "pointer" }}></i>
+                      </>
+                      
                     )
                   ) : (
                     <span style={{ color: 'green', fontWeight: 'bold' }}>No requerida</span>

@@ -174,7 +174,8 @@ export const AnalisisScreen = () => {
   const handleVerifyAnomalia = (analisis) => {
     Swal.fire({
       title: 'Verificar Anomalía',
-      text: 'Ingrese una descripción para verificar la anomalía:',
+      text: `${analisis.ANOMALIA_OBSERVACION || 'Sin descripción'}
+       \n Ingrese una descripción para verificar la anomalía:`,
       input: 'text',
       inputPlaceholder: 'Descripción...',
       showCancelButton: true,
@@ -375,6 +376,7 @@ export const AnalisisScreen = () => {
                         <i className="fas fa-info-circle" style={{ marginLeft: "5px", color: "rgb(255, 193, 7)" }}></i>
                       </div>
                     ) : (
+                      <>
                       <button
                         style={{ fontWeight: 'bold' }}
                         className="btn btn-warning btn-sm mr-2"
@@ -382,6 +384,9 @@ export const AnalisisScreen = () => {
                       >
                         Verificar
                       </button>
+                      <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(analisis)} style={{ marginLeft: "5px", color: "rgb(255, 193, 7)", cursor: "pointer" }}></i>
+                      </>
+                      
                     )
                   ) : (
                     <span style={{ color: 'green', fontWeight: 'bold' }}>No requerida</span>

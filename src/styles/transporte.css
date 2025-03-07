@@ -1,0 +1,63 @@
+/* Contenedor principal: centra el texto y define margen */
+.prueba-alcohol-container {
+  text-align: center;
+  margin: 0.5rem;
+}
+
+/* Etiqueta principal de "Prueba de alcohol:" */
+.prueba-label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+/* Contenedor del switch y etiquetas "Negativa"/"Positiva" */
+.transporte-switch-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Etiquetas a los costados del switch */
+.negative-label,
+.positive-label {
+  margin: 0 0.5rem;
+  font-size: 0.9em;
+}
+
+/* Estilos personalizados para el toggle de alcohol (ya definidos) */
+.transporte-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+.transporte-switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.transporte-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+.transporte-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+.transporte-switch input:checked + .transporte-slider {
+  background-color: #2196F3;
+}
+.transporte-switch input:checked + .transporte-slider:before {
+  transform: translateX(26px);
+}

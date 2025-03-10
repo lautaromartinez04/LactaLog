@@ -7,38 +7,347 @@ import { getToken, fetchWithToken, removeTokenOnUnload } from '../utils/auth';
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const UsuariosScreen = () => {
-  const [data, setData] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
+  const [clientes, setClientes] = useState([]); // Lista de clientes para el select (si es rol 2)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Remover token al salir o recargar
   useEffect(() => {
-    // Si no hay token, getToken redirige al login.
-    const token = getToken();
+    removeTokenOnUnload();
+  }, []);
 
+  // Cargar usuarios y clientes
+  useEffect(() => {
+    const token = getToken();
     const fetchData = async () => {
       try {
-        const response = await fetchWithToken(`${API_URL}/usuarios/`, {
-          method: 'GET'
-        });
-        if (!response.ok) {
-          throw new Error('Error al obtener los datos');
-        }
-        const result = await response.json();
-        setData(result);
+        const [usuariosRes, clientesRes] = await Promise.all([
+          fetchWithToken(`${API_URL}/usuarios/`, { method: 'GET' }),
+          fetchWithToken(`${API_URL}/clientes/`, { method: 'GET' })
+        ]);
+        if (!usuariosRes.ok) throw new Error('Error al obtener los usuarios');
+        if (!clientesRes.ok) throw new Error('Error al obtener los clientes');
+        const usuariosData = await usuariosRes.json();
+        const clientesData = await clientesRes.json();
+        // Excluir administradores (ROLUSUARIO === 1)
+        const usuariosFiltrados = usuariosData.filter(u => u.ROLUSUARIO !== 1);
+        setUsuarios(usuariosFiltrados);
+        setClientes(clientesData);
         setLoading(false);
       } catch (err) {
         setError(err.message);
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
-  useEffect(() => {
-    removeTokenOnUnload();
-  }, []);
+  // Filtrar usuarios según búsqueda
+  const filteredUsuarios = usuarios.filter(user =>
+    user.NOMBRE.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.EMAIL.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (user.TELEFONO && user.TELEFONO.includes(searchTerm))
+  );
+
+  // Handler para agregar un nuevo usuario
+  const handleAddUser = async (newUser) => {
+    try {
+      const token = getToken();
+      const response = await fetchWithToken(`${API_URL}/usuarios`, {
+        method: 'POST',
+        body: JSON.stringify(newUser)
+      });
+      if (response.ok) {
+        const createdUser = await response.json();
+        setUsuarios(prev => [...prev, createdUser]);
+        Swal.fire("Éxito", "Usuario agregado correctamente", "success");
+      } else {
+        throw new Error('Error al agregar el usuario');
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      Swal.fire("Error", "No se pudo agregar el usuario", "error");
+    }
+  };
+
+  // Modal para agregar usuario
+  const handleAddUserButtonClick = () => {
+    Swal.fire({
+      title: 'Nuevo Usuario',
+      html: `
+        <div style="display:flex; flex-wrap: wrap; justify-content: center;">
+          <label for="NOMBRE" class="w-100">Nombre:</label>
+          <input type="text" id="NOMBRE" class="swal2-input mt-0 mb-3">
+        </div>
+        <div style="display:flex; flex-wrap: wrap; justify-content: center;">
+          <label for="EMAIL" class="w-100">Correo:</label>
+          <input type="email" id="EMAIL" class="swal2-input mt-0 mb-3">
+        </div>
+        <!-- Dos campos para teléfono en línea -->
+        <div style="display:flex; flex-wrap: wrap; justify-content: center;">
+          <label for="TELEFONO" class="w-100">Tel&eacute;fono:</label>
+          <div style="display:flex; justify-content: center; gap:5px;">
+            <input type="text" id="AREA" class="swal2-input mt-0 mb-3 mx-0 w-25" placeholder="(sin 0)">
+            <input type="text" id="NUMERO" class="swal2-input mt-0 mb-3 mx-0 w-75" placeholder="(sin 15)">
+          </div>
+        </div>
+        <div style="display:flex; flex-wrap: wrap; justify-content: center;">
+          <label for="HSPASS" class="w-100">Contraseña:</label>
+          <input type="password" id="HSPASS" class="swal2-input mt-0 mb-3">
+        </div>
+        <select id="ROLUSUARIO" class="swal2-input">
+          <option value="2">Cliente</option>
+          <option value="3">Administrativo</option>
+          <option value="4" selected>Camionero</option>
+        </select>
+        <!-- Contenedor centrado para los checkboxes -->
+        <div style="display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:20px; margin-top:10px;">
+          <label className="d-flex align-items-center">
+            <input type="checkbox" class="custom-checkbox-users" id="WD_EMAIL"/> Notificar por Mail
+          </label>
+          <label className="d-flex align-items-center">
+            <input type="checkbox" class="custom-checkbox-users" id="WD_WHATSAPP"/> Notificar por WhatsApp
+          </label>
+        </div>
+        <!-- Select para relacionar con un cliente, solo si es rol Cliente -->
+        <div id="clienteSelect" style="display:none; margin-top:10px;">
+          <select id="CLIENTEID" class="swal2-input">
+            ${clientes.map(c => `<option value="${c.CLIENTEID}">${c.NOMBRE}</option>`).join('')}
+          </select>
+        </div>
+      `,
+      focusConfirm: false,
+      preConfirm: () => {
+        const NOMBRE = Swal.getPopup().querySelector("#NOMBRE").value;
+        const EMAIL = Swal.getPopup().querySelector("#EMAIL").value;
+        const AREA = Swal.getPopup().querySelector("#AREA").value;
+        const NUMERO = Swal.getPopup().querySelector("#NUMERO").value;
+        const HSPASS = Swal.getPopup().querySelector("#HSPASS").value;
+        const ROLUSUARIO = Number(Swal.getPopup().querySelector("#ROLUSUARIO").value);
+        const WD_EMAIL = Swal.getPopup().querySelector("#WD_EMAIL").checked;
+        const WD_WHATSAPP = Swal.getPopup().querySelector("#WD_WHATSAPP").checked;
+        let CLIENTEID = null;
+        if (ROLUSUARIO === 2) {
+          CLIENTEID = Number(Swal.getPopup().querySelector("#CLIENTEID").value);
+        }
+        if (!NOMBRE || !EMAIL || !AREA || !NUMERO) {
+          Swal.showValidationMessage("Todos los campos son obligatorios");
+          return false;
+        }
+        // Validar email único (excluyendo al usuario que se edita)
+        const emailExists = usuarios.some(u =>
+          u.EMAIL.toLowerCase() === EMAIL.toLowerCase() && u.USUARIOID !== user.USUARIOID
+        );
+        if (emailExists) {
+          Swal.showValidationMessage("Ese mail ya existe");
+          return false;
+        }
+        const TELEFONO = `+549${AREA}${NUMERO}`;
+
+        // Construir el objeto actualizable sin la clave HSPASS si está vacía.
+        const updatedUser = {
+          ...user,
+          NOMBRE,
+          EMAIL,
+          TELEFONO,
+          ROLUSUARIO,
+          EXTERNO: true,
+          CLIENTEID,
+          WD_EMAIL,
+          WD_WHATSAPP
+        };
+        // Si se ingresa una contraseña no vacía, la agregamos
+        if (HSPASS.trim() !== "") {
+          updatedUser.HSPASS = HSPASS;
+        }
+        return updatedUser;
+      },
+      didOpen: () => {
+        const rolSelect = Swal.getPopup().querySelector("#ROLUSUARIO");
+        rolSelect.addEventListener("change", (e) => {
+          const clienteDiv = Swal.getPopup().querySelector("#clienteSelect");
+          if (e.target.value === "2") {
+            clienteDiv.style.display = "block";
+          } else {
+            clienteDiv.style.display = "none";
+          }
+        });
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Agregar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleAddUser(result.value);
+      }
+    });
+  };
+
+  // Handler para eliminar un usuario
+  const handleDeleteUser = async (userID) => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const token = getToken();
+          const response = await fetchWithToken(`${API_URL}/usuarios/${userID}`, {
+            method: 'DELETE'
+          });
+          if (response.ok) {
+            setUsuarios(prev => prev.filter(user => user.USUARIOID !== userID));
+            Swal.fire('¡Eliminado!', 'El usuario ha sido eliminado.', 'success');
+          } else {
+            throw new Error('Error al eliminar el usuario');
+          }
+        } catch (err) {
+          console.error('Error al eliminar el usuario:', err);
+          Swal.fire('Error', 'No se pudo eliminar el usuario', 'error');
+        }
+      }
+    });
+  };
+
+  // Handler para editar un usuario, precargando los valores actuales.
+  const handleEditUser = (user) => {
+    // Para el teléfono, si existe y comienza con "+54 9", extraemos el código y el número.
+    const tel = user.TELEFONO && user.TELEFONO.startsWith('+549')
+      ? user.TELEFONO
+      : '';
+    // Suponemos que el teléfono tiene el formato "+54 9" seguido del código y número.
+    const cleanTel = tel.substring(4);
+    const area = cleanTel.substring(0, 3);
+    const numero = cleanTel.substring(3);
+
+    Swal.fire({
+      title: 'Editar Usuario',
+      html: `
+        <div style="display:flex; flex-wrap: wrap; justify-content: center;">
+          <label for="NOMBRE" class="w-100">Nombre:</label>
+          <input type="text" id="NOMBRE" class="swal2-input" placeholder="Nombre" value="${user.NOMBRE}">
+        </div>
+        <div style="display:flex; flex-wrap: wrap; justify-content: center;">
+          <label for="EMAIL" class="w-100">Correo:</label>
+          <input type="email" id="EMAIL" class="swal2-input" placeholder="Correo" value="${user.EMAIL}">
+        </div>
+        <!-- Dos inputs para teléfono, en línea -->
+        <div style="display:flex; flex-wrap: wrap; justify-content: center;">
+          <label for="TELEFONO" class="w-100">Tel&eacute;fono:</label>
+          <div style="display:flex; justify-content: center; gap:5px;">
+            <input type="text" id="AREA" class="swal2-input w-25" placeholder="(sin 0)" value="${area}">
+            <input type="text" id="NUMERO" class="swal2-input w-75" placeholder="(sin 15)" value="${numero}">
+          </div>
+        </div>
+        <div style="display:flex; flex-wrap: wrap; justify-content: center;">
+          <label for="HSPASS" class="w-100">Contraseña (dejar vacío para no modificar):</label>
+          <input type="password" id="HSPASS" class="swal2-input" placeholder="Contraseña">
+        </div>
+        <select id="ROLUSUARIO" class="swal2-input">
+          <option value="2" ${user.ROLUSUARIO === 2 ? 'selected' : ''}>Cliente</option>
+          <option value="3" ${user.ROLUSUARIO === 3 ? 'selected' : ''}>Administrativo</option>
+          <option value="4" ${user.ROLUSUARIO === 4 ? 'selected' : ''}>Camionero</option>
+        </select>
+        <div style="display:flex; justify-content:center; align-items:center; gap:20px; margin-top:10px;">
+          <label >
+            <input type="checkbox" class="custom-checkbox-users" id="WD_EMAIL" ${user.WD_EMAIL ? 'checked' : ''}/> Notificar por Mail
+          </label>
+          <label >
+            <input type="checkbox" class="custom-checkbox-users" id="WD_WHATSAPP" ${user.WD_WHATSAPP ? 'checked' : ''}/> Notificar por WhatsApp
+          </label>
+        </div>
+        <div id="clienteSelect" style="display: ${user.ROLUSUARIO === 2 ? 'block' : 'none'}; margin-top:10px;">
+          <select id="CLIENTEID" class="swal2-input">
+            ${clientes.map(c => `<option value="${c.CLIENTEID}" ${c.CLIENTEID === user.CLIENTEID ? 'selected' : ''}>${c.NOMBRE}</option>`).join('')}
+          </select>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Actualizar',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        const NOMBRE = Swal.getPopup().querySelector("#NOMBRE").value;
+        const EMAIL = Swal.getPopup().querySelector("#EMAIL").value;
+        const AREA = Swal.getPopup().querySelector("#AREA").value;
+        const NUMERO = Swal.getPopup().querySelector("#NUMERO").value;
+        const HSPASS = Swal.getPopup().querySelector("#HSPASS").value;
+        const ROLUSUARIO = Number(Swal.getPopup().querySelector("#ROLUSUARIO").value);
+        const WD_EMAIL = Swal.getPopup().querySelector("#WD_EMAIL").checked;
+        const WD_WHATSAPP = Swal.getPopup().querySelector("#WD_WHATSAPP").checked;
+        let CLIENTEID = null;
+        if (ROLUSUARIO === 2) {
+          CLIENTEID = Number(Swal.getPopup().querySelector("#CLIENTEID").value);
+        }
+        if (!NOMBRE || !EMAIL || !AREA || !NUMERO) {
+          Swal.showValidationMessage("Todos los campos son obligatorios");
+          return false;
+        }
+        // Validar email único (excluyendo al usuario actual)
+        const emailExists = usuarios.some(u =>
+          u.EMAIL.toLowerCase() === EMAIL.toLowerCase() && u.USUARIOID !== user.USUARIOID
+        );
+        if (emailExists) {
+          Swal.showValidationMessage("Ese mail ya existe");
+          return false;
+        }
+        const TELEFONO = `+549${AREA}${NUMERO}`;
+        const updatedUser = {
+          ...user,
+          NOMBRE,
+          EMAIL,
+          TELEFONO,
+          ROLUSUARIO,
+          EXTERNO: true,
+          CLIENTEID,
+          WD_EMAIL,
+          WD_WHATSAPP
+        };
+        if (HSPASS.trim() !== "") {
+          updatedUser.HSPASS = HSPASS;
+        }
+        return updatedUser;
+      },
+      didOpen: () => {
+        const rolSelect = Swal.getPopup().querySelector("#ROLUSUARIO");
+        rolSelect.addEventListener("change", (e) => {
+          const clienteDiv = Swal.getPopup().querySelector("#clienteSelect");
+          if (e.target.value === "2") {
+            clienteDiv.style.display = "block";
+          } else {
+            clienteDiv.style.display = "none";
+          }
+        });
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const updatedUser = result.value;
+        fetchWithToken(`${API_URL}/usuarios/${updatedUser.USUARIOID}`, {
+          method: 'PUT',
+          body: JSON.stringify(updatedUser)
+        })
+          .then(res => {
+            if (res.ok) {
+              setUsuarios(prev =>
+                prev.map(u => (u.USUARIOID === updatedUser.USUARIOID ? updatedUser : u))
+              );
+              Swal.fire('Éxito', 'Usuario actualizado correctamente', 'success');
+            } else {
+              throw new Error('Error al actualizar el usuario');
+            }
+          })
+          .catch(err => {
+            console.error('Error al actualizar el usuario:', err);
+            Swal.fire('Error', 'No se pudo actualizar el usuario', 'error');
+          });
+      }
+    });
+  };
 
   if (loading) {
     return (
@@ -50,202 +359,9 @@ export const UsuariosScreen = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className='container text-center mt-5 p-5 bg-light rounded shadow'>
-        <p>Error al cargar los datos: {error}</p>
-      </div>
-    );
-  }
-
-  // Filtrar únicamente usuarios con ROLUSUARIO 3 o 4 y aplicar el término de búsqueda
-  const filteredData = data.filter(user =>
-    (user.ROLUSUARIO === 3 || user.ROLUSUARIO === 4) &&
-    (
-      user.NOMBRE.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.EMAIL.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.TELEFONO.includes(searchTerm)
-    )
-  );
-
-  const handleNewUser = async (NOMBRE, EMAIL, TELEFONO, HSPASS, ROLUSUARIO, EXTERNO, CLIENTEID, USUARIOID) => {
-    const newUser = {
-      NOMBRE,
-      EMAIL,
-      TELEFONO,
-      ROLUSUARIO,
-      HSPASS,
-      EXTERNO,
-      CLIENTEID,
-      USUARIOID
-    };
-
-    try {
-      const response = await fetchWithToken(`${API_URL}/usuarios`, {
-        method: "POST",
-        body: JSON.stringify(newUser)
-      });
-
-      if (response.ok) {
-        const createdUser = await response.json();
-        setData(prevData => [...prevData, createdUser]);
-        Swal.fire("Éxito", "Usuario agregado correctamente", "success");
-      } else {
-        throw new Error("Error al agregar el usuario");
-      }
-    } catch (err) {
-      console.error("Error:", err);
-      Swal.fire("Error", "No se pudo agregar el usuario", "error");
-    }
-  };
-
-  const handleAddUserButtonClick = () => {
-    Swal.fire({
-      title: "Nuevo usuario",
-      html: `
-        <input type="text" id="NOMBRE" class="swal2-input" placeholder="Nombre">
-        <input type="email" id="EMAIL" class="swal2-input" placeholder="Correo">
-        <input type="text" id="TELEFONO" class="swal2-input" placeholder="Teléfono">
-        <input type="password" id="HSPASS" class="swal2-input" placeholder="Contraseña">
-      `,
-      showCancelButton: true,
-      confirmButtonText: "Agregar",
-      cancelButtonText: "Cancelar",
-      preConfirm: () => {
-        const NOMBRE = Swal.getPopup().querySelector("#NOMBRE").value;
-        const EMAIL = Swal.getPopup().querySelector("#EMAIL").value;
-        const TELEFONO = Swal.getPopup().querySelector("#TELEFONO").value;
-        const HSPASS = Swal.getPopup().querySelector("#HSPASS").value;
-        // Se asigna por defecto rol 3 para nuevos usuarios.
-        const ROLUSUARIO = 4;
-        const CLIENTEID = 0;
-        const USUARIOID = 0;
-        const EXTERNO = true;
-
-        if (!NOMBRE || !EMAIL || !TELEFONO) {
-          Swal.showValidationMessage("Todos los campos son obligatorios");
-          return false;
-        }
-
-        handleNewUser(NOMBRE, EMAIL, TELEFONO, HSPASS, ROLUSUARIO, EXTERNO, CLIENTEID, USUARIOID);
-      }
-    });
-  };
-
-  const handleDeleteUser = async (id) => {
-    try {
-      const result = await Swal.fire({
-        title: '¿Estás seguro?',
-        text: 'Esta acción no se puede deshacer',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-      });
-  
-      if (result.isConfirmed) {
-        // Llamamos a fetchWithToken, pero forzamos los headers sin Content-Type
-        const response = await fetchWithToken(`${API_URL}/usuarios/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Accept': 'application/json'
-            // No incluimos 'Content-Type'
-          }
-        });
-  
-        console.log("Response status:", response.status);
-  
-        if (response.ok) {
-          setData(prevData => prevData.filter(user => user.USUARIOID !== id));
-          Swal.fire('Eliminado!', 'El usuario ha sido eliminado.', 'success');
-        } else {
-          throw new Error('Error al eliminar el usuario');
-        }
-      }
-    } catch (err) {
-      console.error('Error al eliminar el usuario:', err);
-      Swal.fire('Error', 'No se pudo eliminar el usuario', 'error');
-    }
-  };
-  
-  
-
-  const handleEditUser = (user) => {
-    Swal.fire({
-      title: "Editar usuario",
-      html: `
-        <input type="text" id="NOMBRE" class="swal2-input" placeholder="Nombre" value="${user.NOMBRE}">
-        <input type="email" id="EMAIL" class="swal2-input" placeholder="Correo" value="${user.EMAIL}">
-        <input type="text" id="TELEFONO" class="swal2-input" placeholder="Teléfono" value="${user.TELEFONO}">
-        <input type="password" id="HSPASS" class="swal2-input" placeholder="Contraseña" value="${user.HSPASS}">
-      `,
-      showCancelButton: true,
-      confirmButtonText: "Guardar",
-      cancelButtonText: "Cancelar",
-      preConfirm: () => {
-        const NOMBRE = Swal.getPopup().querySelector("#NOMBRE").value;
-        const EMAIL = Swal.getPopup().querySelector("#EMAIL").value;
-        const TELEFONO = Swal.getPopup().querySelector("#TELEFONO").value;
-        const ROLUSUARIO = user.ROLUSUARIO;
-        const CLIENTEID = user.CLIENTEID;
-        const HSPASS = Swal.getPopup().querySelector("#HSPASS").value;
-        const USUARIOID = user.USUARIOID;
-        const EXTERNO = user.EXTERNO;
-
-        if (!NOMBRE || !EMAIL || !TELEFONO || !HSPASS) {
-          Swal.showValidationMessage("Todos los campos son obligatorios");
-          return false;
-        }
-
-        handleUpdateUser(USUARIOID, NOMBRE, EMAIL, TELEFONO, ROLUSUARIO, EXTERNO, CLIENTEID, HSPASS);
-      }
-    });
-  };
-
-  const handleUpdateUser = async (USUARIOID, NOMBRE, EMAIL, TELEFONO, ROLUSUARIO, EXTERNO, CLIENTEID, HSPASS) => {
-    const updatedUser = HSPASS === "undefined"
-      ? {
-          NOMBRE,
-          EMAIL,
-          TELEFONO,
-          ROLUSUARIO,
-          EXTERNO,
-          CLIENTEID
-        }
-      : {
-          NOMBRE,
-          EMAIL,
-          TELEFONO,
-          ROLUSUARIO,
-          EXTERNO,
-          CLIENTEID,
-          HSPASS
-        };
-
-    try {
-      const response = await fetchWithToken(`${API_URL}/usuarios/${USUARIOID}`, {
-        method: 'PUT',
-        body: JSON.stringify(updatedUser)
-      });
-
-      if (response.ok) {
-        setData(prevData =>
-          prevData.map(user => (user.USUARIOID === USUARIOID ? { ...user, ...updatedUser } : user))
-        );
-        Swal.fire('Éxito', 'Usuario actualizado correctamente', 'success');
-      } else {
-        throw new Error('Error al actualizar el usuario');
-      }
-    } catch (err) {
-      console.error('Error:', err);
-      Swal.fire('Error', 'No se pudo actualizar el usuario', 'error');
-    }
-  };
-
   return (
-    <div className="container mt-2 mb-2 text-center p-5 bg-light rounded shadow">
-      <h2 className="mb-4">Usuarios</h2>
-
+    <div className="container text-center mt-2 mb-2 p-5 bg-light rounded shadow">
+      <h2 className="mb-4 text-center">Usuarios</h2>
       <div className="d-flex justify-content-center mb-3">
         <input
           type="text"
@@ -258,7 +374,6 @@ export const UsuariosScreen = () => {
           <i className="fas fa-plus"></i>
         </button>
       </div>
-
       <table className="table table-striped table-bordered">
         <thead>
           <tr>
@@ -266,17 +381,29 @@ export const UsuariosScreen = () => {
             <th>Correo</th>
             <th>Teléfono</th>
             <th>Rol</th>
+            <th>Notificación (Mail)</th>
+            <th>Notificación (WhatsApp)</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {filteredData.length > 0 ? (
-            filteredData.map((user) => (
+          {filteredUsuarios.length > 0 ? (
+            filteredUsuarios.map((user) => (
               <tr key={user.USUARIOID}>
                 <td>{user.NOMBRE}</td>
                 <td>{user.EMAIL}</td>
                 <td>{user.TELEFONO}</td>
-                <td>{user.ROLUSUARIO === 3 ? 'Administrativo' : 'Camionero'}</td>
+                <td>
+                  {user.ROLUSUARIO === 2
+                    ? 'Cliente'
+                    : user.ROLUSUARIO === 3
+                      ? 'Administrativo'
+                      : user.ROLUSUARIO === 4
+                        ? 'Camionero'
+                        : 'Desconocido'}
+                </td>
+                <td>{user.WD_EMAIL ? 'Sí' : 'No'}</td>
+                <td>{user.WD_WHATSAPP ? 'Sí' : 'No'}</td>
                 <td className="d-flex justify-content-center">
                   <button
                     className="btn btn-warning btn-sm rounded-circle mr-2"
@@ -297,7 +424,7 @@ export const UsuariosScreen = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="5">No se encontraron resultados.</td>
+              <td colSpan="7">No se encontraron resultados.</td>
             </tr>
           )}
         </tbody>

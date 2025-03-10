@@ -245,6 +245,9 @@ export const AnalisisScreen = () => {
     }
   };
 
+  const userRole = Number(localStorage.getItem('rol'));
+  const isManager = userRole === 1;
+
   if (loading) {
     return (
       <div className="container text-center mt-5 p-5 w-100 d-flex justify-content-center">

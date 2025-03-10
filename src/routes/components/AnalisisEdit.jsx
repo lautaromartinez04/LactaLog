@@ -164,8 +164,8 @@ export const AnalisisEdit = ({
     { label: 'Porcentaje de Sólidos Totales', value: currentAnalisis.ST_PORCENTUAL, unit: '%' },
     { label: 'Gramos de Sólidos Totales por litro', value: currentAnalisis.ST_KG, unit: 'g/L' },
     { label: 'UREA', value: currentAnalisis.UREA, unit: 'mg/L' },
-    { label: 'Unidades formadoras de col (UFC)', value: currentAnalisis.UFC, unit: 'mg/L' },
-    { label: 'Celulas Somáticas', value: currentAnalisis.CS, unit: 'mg/L' },
+    { label: 'Unidades formadoras de col (UFC)', value: currentAnalisis.UFC, unit: 'UFC/L' },
+    { label: 'Celulas Somáticas', value: currentAnalisis.CS, unit: 'CS/L' },
     { label: 'Agua', value: currentAnalisis.AGUA, unit: '' },
     { label: 'Antibiotico', value: currentAnalisis.ANTIBIOTICO, unit: '' }
   ];
@@ -292,7 +292,7 @@ export const AnalisisEdit = ({
     ST_PORCENTUAL: { min: 11.9, max: 13.5, unit: '%' },
     ST_KG: { min: 119, max: 135, unit: 'grs' },
     UREA: { min: 10, max: 16, unit: 'mg/L' },
-    UFC: { min: 50, max: 250, unit: 'mg/L' },
+    UFC: { min: 50000, max: 250000, unit: 'mg/L' },
     CS: { min: 200, max: 400, unit: 'mg/L' },
   };
 

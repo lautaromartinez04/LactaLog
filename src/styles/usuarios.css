@@ -4,3 +4,38 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
+  .custom-checkbox-users {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #007bff;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.2s ease-in-out;
+    outline: none;
+  }
+  
+  /* Estilo cuando el checkbox está marcado */
+  .custom-checkbox-users:checked {
+    background-color: #007bff;
+  }
+  
+  /* Dibujo de la "marca de verificación" */
+  .custom-checkbox-users:checked::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 4px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  
+  /* Opcional: Estilo al pasar el mouse */
+  .custom-checkbox-users:hover {
+    border-color: #0056b3;
+  }

@@ -78,7 +78,7 @@ const AnalisisPrint = ({ analisis, userName, clientName }) => {
     { label: 'Gramos de Sólidos Totales por litro', value: analisis.ST_KG, normal: '120-130 gr/l', unit: 'gr/l' },
     { label: 'UREA', value: analisis.UREA, normal: '10-16 mg/dL', unit: 'mg/dL' },
     // Nuevos campos:
-    { label: 'unidades formadoras de colonias (UFC)', value: analisis.UFC, normal: '200-400 UFC/ml', unit: 'UFC/ml' },
+    { label: 'unidades formadoras de colonias (UFC)', value: analisis.UFC, normal: '50000-250000 UFC/ml', unit: 'UFC/ml' },
     { label: 'Celulas somáticas', value: analisis.CS, normal: '200-400 celulas/ml', unit: 'celulas/ml' },
     { label: 'Agua', value: analisis.AGUA ? 'Sí' : 'No', normal: 'No', unit: '' },
     { label: 'Antibiótico', value: analisis.ANTIBIOTICO ? 'Sí' : 'No', normal: 'No', unit: '' },

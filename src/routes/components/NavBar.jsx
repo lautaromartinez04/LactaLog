@@ -6,6 +6,7 @@ import icono from '../../media/Icono.png';
 
 export const NavBar = ({ isAuthenticated, handleLogout }) => {
   const navigate = useNavigate();
+  const userRole = Number(localStorage.getItem('rol'));
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -78,12 +79,16 @@ export const NavBar = ({ isAuthenticated, handleLogout }) => {
               <li className="nav-item">
                 <NavLink to="/Reportes" className="nav-link">Reportes</NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink to="/Usuarios" className="nav-link">Usuarios</NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink to="/Clientes" className="nav-link">Clientes</NavLink>
-              </li>
+              {userRole !== 2 && (
+                <>
+                  <li className="nav-item">
+                    <NavLink to="/Usuarios" className="nav-link">Usuarios</NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/Clientes" className="nav-link">Clientes</NavLink>
+                  </li>
+                </>
+              )}
               <li className="nav-item">
                 <button
                   className="nav-link1 btn-outline-danger btn btn-sm btn-block text-white font-weight-bold btn-link"

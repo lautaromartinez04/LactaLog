@@ -23,6 +23,10 @@ export const AnalisisScreen = () => {
 
   const token = getToken();
 
+  // Obtener rol del usuario y, en caso de cliente (rol 2), su CLIENTEID
+  const userRole = Number(localStorage.getItem('rol'));
+  const clienteId = userRole === 2 ? Number(localStorage.getItem('clienteId')) : null;
+
   useEffect(() => {
     removeTokenOnUnload();
   }, []);
@@ -34,7 +38,7 @@ export const AnalisisScreen = () => {
         const resAnalisis = await fetchWithToken(`${API_URL}/analisis/`, { method: 'GET' });
         if (!resAnalisis.ok) throw new Error("Error al obtener análisis");
         const analyses = await resAnalisis.json();
-        // Ordenar análisis para que el más reciente aparezca primero
+        // Ordenar análisis: el más reciente primero
         analyses.sort((a, b) => new Date(b.FECHAHORAANALISIS) - new Date(a.FECHAHORAANALISIS));
 
         // Fetch transportes
@@ -77,7 +81,7 @@ export const AnalisisScreen = () => {
     fetchAllData();
   }, [token]);
 
-  // Filtrado de análisis según término de búsqueda, ID y filtro seleccionado
+  // Filtrado de análisis según búsqueda, ID, filtro seleccionado y (si rol 2) CLIENTEID asociado
   const filteredAnalisis = analisisList.filter(analisis => {
     const user = users[analisis.USUARIOID_ANALISIS] || analisis.USUARIOID_ANALISIS;
     const client = (() => {
@@ -94,7 +98,7 @@ export const AnalisisScreen = () => {
     );
     const matchesId = idSearch ? analisis.ANALISISID.toString().includes(idSearch) : true;
 
-    // Aplicar filtro según el botón seleccionado
+    // Filtro por estado (abierto, cerrado, etc.)
     let matchesFilter = true;
     switch (filterType) {
       case "open":
@@ -111,6 +115,14 @@ export const AnalisisScreen = () => {
         break;
       default:
         matchesFilter = true;
+    }
+
+    // Si el usuario es cliente, se filtran solo los análisis relacionados a su CLIENTEID
+    if (userRole === 2) {
+      const transporte = transportes.find(t => t.TRANSPORTEID === analisis.TRANSPORTEID);
+      if (!transporte || Number(transporte.CLIENTEID) !== clienteId) {
+        return false;
+      }
     }
 
     return matchesGeneral && matchesId && matchesFilter;
@@ -245,7 +257,6 @@ export const AnalisisScreen = () => {
     }
   };
 
-  const userRole = Number(localStorage.getItem('rol'));
   const isManager = userRole === 1;
 
   if (loading) {
@@ -380,28 +391,40 @@ export const AnalisisScreen = () => {
                       </div>
                     ) : (
                       <>
-                      <button
-                        style={{ fontWeight: 'bold' }}
-                        className="btn btn-warning btn-sm mr-2"
-                        onClick={() => handleVerifyAnomalia(analisis)}
-                      >
-                        Verificar
-                      </button>
-                      <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(analisis)} style={{ marginLeft: "5px", color: "rgb(255, 193, 7)", cursor: "pointer" }}></i>
+                        {userRole !== 2 && (
+                          <>
+                            <button
+                              style={{ fontWeight: 'bold' }}
+                              className="btn btn-warning btn-sm mr-2"
+                              onClick={() => handleVerifyAnomalia(analisis)}
+                            >
+                              Verificar
+                            </button>
+                            <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(analisis)} style={{ marginLeft: "5px", color: "rgb(255, 193, 7)", cursor: "pointer" }}></i>
+                          </>
+                        )}
                       </>
-                      
                     )
                   ) : (
                     <span style={{ color: 'green', fontWeight: 'bold' }}>No requerida</span>
                   )}
                 </td>
                 <td>
-                  <button
-                    className="btn btn-info btn-sm"
-                    onClick={() => handleViewClick(analisis)}
-                  >
-                    <i className="fas fa-eye"></i> Ver
-                  </button>
+                  {userRole === 2 ? (
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => handleViewClick(analisis)}
+                    >
+                      <i className="fas fa-eye"></i> Ver
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-info btn-sm"
+                      onClick={() => handleViewClick(analisis)}
+                    >
+                      <i className="fas fa-eye"></i> Ver
+                    </button>
+                  )}
                 </td>
               </tr>
             ))

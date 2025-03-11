@@ -36,6 +36,7 @@
   width: 0;
   height: 0;
 }
+
 .transporte-slider {
   position: absolute;
   cursor: pointer;
@@ -44,6 +45,7 @@
   transition: .4s;
   border-radius: 24px;
 }
+
 .transporte-slider:before {
   position: absolute;
   content: "";
@@ -58,6 +60,7 @@
 .transporte-switch input:checked + .transporte-slider {
   background-color: #2196F3;
 }
+
 .transporte-switch input:checked + .transporte-slider:before {
   transform: translateX(26px);
 }

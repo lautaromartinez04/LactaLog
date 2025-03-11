@@ -5,14 +5,14 @@ import '../../styles/AnalisisEdit.css'; // Aquí estarán las clases .no-print y
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const AnalisisEdit = ({ 
-  analisis, 
-  onSave, 
-  updateAnalisis, 
-  refreshAnalisisList, 
-  onCancel, 
-  userName, 
-  clientName 
+export const AnalisisEdit = ({
+  analisis,
+  onSave,
+  updateAnalisis,
+  refreshAnalisisList,
+  onCancel,
+  userName,
+  clientName
 }) => {
   // Creamos un estado local para el análisis actual que se mostrará
   const [currentAnalisis, setCurrentAnalisis] = useState(analisis);
@@ -422,46 +422,49 @@ export const AnalisisEdit = ({
             </div>
           </div>
           <div className="d-flex justify-content-between mt-4">
-            {/* Botón "Volver" para regresar a la lista */}
             <button className="btn btn-warning" onClick={onCancel}>
               <i className="fas fa-arrow-left"></i> Volver
             </button>
             <button className="btn btn-secondary" onClick={handlePrint}>
               <i className="fas fa-print"></i> Imprimir
             </button>
-            <button
-              className="btn btn-info"
-              onClick={() => setIsEditing(true)}
-              disabled={currentAnalisis.CERRADO}  // Se deshabilita si el análisis está cerrado
-            >
-              <i className="fas fa-edit"></i> Editar
-            </button>
-            {currentAnalisis.CERRADO ? (
-              isManager ? (
+            {userRole !== 2 && (
+              <>
                 <button
-                  className="btn btn-success"
-                  onClick={handleReopenAnalisis}
-                  title="Reabrir Análisis"
+                  className="btn btn-info"
+                  onClick={() => setIsEditing(true)}
+                  disabled={currentAnalisis.CERRADO}
                 >
-                  <i className="fas fa-lock-open"></i> Reabrir Análisis
+                  <i className="fas fa-edit"></i> Editar
                 </button>
-              ) : (
-                <button
-                  className="btn btn-success disabled"
-                  title="Solicite a un administrador para reabrir el análisis"
-                  disabled
-                >
-                  <i className="fas fa-lock-open"></i> Reabrir Análisis
-                </button>
-              )
-            ) : (
-              <button
-                className="btn btn-danger"
-                onClick={handleCloseAnalisis}
-                title="Cerrar Análisis"
-              >
-                <i className="fas fa-lock"></i> Cerrar Análisis
-              </button>
+                {currentAnalisis.CERRADO ? (
+                  isManager ? (
+                    <button
+                      className="btn btn-success"
+                      onClick={handleReopenAnalisis}
+                      title="Reabrir Análisis"
+                    >
+                      <i className="fas fa-lock-open"></i> Reabrir Análisis
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-success disabled"
+                      title="Solicite a un administrador para reabrir el análisis"
+                      disabled
+                    >
+                      <i className="fas fa-lock-open"></i> Reabrir Análisis
+                    </button>
+                  )
+                ) : (
+                  <button
+                    className="btn btn-danger"
+                    onClick={handleCloseAnalisis}
+                    title="Cerrar Análisis"
+                  >
+                    <i className="fas fa-lock"></i> Cerrar Análisis
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -623,27 +626,31 @@ export const AnalisisEdit = ({
               </div>
               <div className="col-md-4 form-group d-flex align-items-center justify-content-center">
                 <label className='mb-1'>Agua</label>
-                <input
-                  type="checkbox"
-                  className="custom-checkbox form-control ml-2"
-                  name="AGUA"
-                  checked={formData.AGUA}
-                  onChange={(e) =>
-                    setFormData(prev => ({ ...prev, AGUA: e.target.checked }))
-                  }
-                />
+                <label className="notif-switch ml-2">
+                  <input
+                    type="checkbox"
+                    name="AGUA"
+                    checked={formData.AGUA}
+                    onChange={(e) =>
+                      setFormData(prev => ({ ...prev, AGUA: e.target.checked }))
+                    }
+                  />
+                  <span className="notif-slider"></span>
+                </label>
               </div>
               <div className="col-md-4 form-group d-flex align-items-center justify-content-center">
                 <label className='mb-1'>Antibiótico</label>
-                <input
-                  type="checkbox"
-                  className="custom-checkbox form-control ml-2"
-                  name="ANTIBIOTICO"
-                  checked={formData.ANTIBIOTICO}
-                  onChange={(e) =>
-                    setFormData(prev => ({ ...prev, ANTIBIOTICO: e.target.checked }))
-                  }
-                />
+                <label className="notif-switch ml-2">
+                  <input
+                    type="checkbox"
+                    name="ANTIBIOTICO"
+                    checked={formData.ANTIBIOTICO}
+                    onChange={(e) =>
+                      setFormData(prev => ({ ...prev, ANTIBIOTICO: e.target.checked }))
+                    }
+                  />
+                  <span className="notif-slider"></span>
+                </label>
               </div>
             </div>
             <div className="mt-3 d-flex justify-content-between">

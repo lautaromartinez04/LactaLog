@@ -12,7 +12,26 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [hasConnection, setHasConnection] = useState(true);
   const navigate = useNavigate();
+
+  // Verificar conexión con la API haciendo un ping
+  useEffect(() => {
+    fetch(`${API_URL}/ping`)
+      .then(res => res.json())
+      .then(data => {
+        if ((data.ping && data.ping === "pong") || (data.detail && data.detail === "Error de prueba")) {
+          setHasConnection(true);
+        } else {
+          setHasConnection(false);
+        }
+      })
+      .catch(err => {
+        setHasConnection(false);
+      });
+  }, []);
+  
+  
 
   // Pre-cargar las credenciales del localStorage si están guardadas
   useEffect(() => {
@@ -90,8 +109,11 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
       localStorage.setItem('token', accessToken);
       // Guardar el id del usuario logueado en "userIDLogin"
       localStorage.setItem('userIDLogin', user.USUARIOID);
-      //guardar el rol del usuario logueado en "userRolLogin"
+      // Guardar el rol del usuario y, si es cliente, su CLIENTEID
       localStorage.setItem('rol', user.ROLUSUARIO);
+      if (user.ROLUSUARIO === 2) {
+        localStorage.setItem('clienteId', user.CLIENTEID);
+      }
 
       // Si se selecciona "Recordar usuario", guardar usuario y contraseña
       if (rememberMe) {
@@ -106,47 +128,79 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
       setIsAuthenticated(true);
       navigate('/');
     } catch (error) {
-      Swal.fire({
-        title: error.message,
-        icon: "error",
-        timer: 2000,
-        showConfirmButton: false
-      });
+      if (error.message === 'Error de autenticación') {
+        const errorMsg = 'Error de autenticación: Usuario o contraseña incorrectos';
+        Swal.fire({
+          title: errorMsg,
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false
+        });
+      } else if (error.message === 'Error de autenticación') { 
+        const errorMsg = 'Usuario o contraseña incorrectos';
+        Swal.fire({
+          title: errorMsg,
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false
+        });
+      } else {
+        Swal.fire({
+          title: errorMsg,
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
     }
   };
 
+  // Si no hay conexión, se renderiza un contenedor en blanco (podés personalizar el mensaje)
+  if (!hasConnection) {
+    return (
+      <div className="container" style={{ userSelect: 'none' }}>
+        <div className="d-flex justify-content-center align-items-center h-100">
+          <img className="" src={icono} style={{ filter: 'grayscale(100%)', userSelect: 'none' }} alt="" />
+          <div className="text-center w-100">
+            <h1>En este momento la aplicacion web no funciona.</h1>
+            <h2>Comuniquese con un administrador.</h2>
+            <h4 style={{ color: "#eaa416" }}>Gracias.</h4>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      
-
       <form onSubmit={handleLogin} className="login-form">
-      <div className='d-flex justify-content-center align-items-center'>
-        <img src={logo} className="img-login" alt="" />
-        <img src={icono} className="img-login" alt="" />
-      </div>
+        <div className="d-flex justify-content-center align-items-center">
+          <img src={logo} className="img-login" alt="" />
+          <img src={icono} className="img-login" alt="" />
+        </div>
         <div>
-          <label htmlFor="username" className='login-label'>Usuario</label>
+          <label htmlFor="username" className="login-label">Usuario</label>
           <input
             type="text"
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            className='login-input'
+            className="login-input"
           />
         </div>
         <div>
-          <label htmlFor="password" className='login-label'>Contraseña</label>
+          <label htmlFor="password" className="login-label">Contraseña</label>
           <input
             type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className='login-input'
+            className="login-input"
           />
         </div>
-        <div className='d-flex align-items-center mb-2'>
+        <div className="d-flex align-items-center mb-2">
           <label htmlFor="rememberMe" className="login-label w-100">
             Recordar usuario
           </label>

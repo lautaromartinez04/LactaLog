@@ -102,14 +102,22 @@ export const UsuariosScreen = () => {
           <option value="3">Administrativo</option>
           <option value="4" selected>Camionero</option>
         </select>
-        <!-- Contenedor centrado para los checkboxes -->
+        <!-- Contenedor centrado para los toggles de notificaciones -->
         <div style="display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:20px; margin-top:10px;">
-          <label className="d-flex align-items-center">
-            <input type="checkbox" class="custom-checkbox-users" id="WD_EMAIL"/> Notificar por Mail
-          </label>
-          <label className="d-flex align-items-center">
-            <input type="checkbox" class="custom-checkbox-users" id="WD_WHATSAPP"/> Notificar por WhatsApp
-          </label>
+          <div class="custom-toggle-notif">
+            <label class="notif-switch">
+              <input type="checkbox" id="WD_EMAIL"/>
+              <span class="notif-slider"></span>
+            </label>
+            <span>Notificar por Mail</span>
+          </div>
+          <div class="custom-toggle-notif">
+            <label class="notif-switch">
+              <input type="checkbox" id="WD_WHATSAPP"/>
+              <span class="notif-slider"></span>
+            </label>
+            <span>Notificar por WhatsApp</span>
+          </div>
         </div>
         <!-- Select para relacionar con un cliente, solo si es rol Cliente -->
         <div id="clienteSelect" style="display:none; margin-top:10px;">
@@ -136,19 +144,17 @@ export const UsuariosScreen = () => {
           Swal.showValidationMessage("Todos los campos son obligatorios");
           return false;
         }
-        // Validar email único (excluyendo al usuario que se edita)
+        // Validar email único
         const emailExists = usuarios.some(u =>
-          u.EMAIL.toLowerCase() === EMAIL.toLowerCase() && u.USUARIOID !== user.USUARIOID
+          u.EMAIL.toLowerCase() === EMAIL.toLowerCase()
         );
         if (emailExists) {
           Swal.showValidationMessage("Ese mail ya existe");
           return false;
         }
         const TELEFONO = `+549${AREA}${NUMERO}`;
-
-        // Construir el objeto actualizable sin la clave HSPASS si está vacía.
-        const updatedUser = {
-          ...user,
+        // Construir el objeto para el nuevo usuario (sin referenciar variable "user")
+        const newUser = {
           NOMBRE,
           EMAIL,
           TELEFONO,
@@ -158,11 +164,10 @@ export const UsuariosScreen = () => {
           WD_EMAIL,
           WD_WHATSAPP
         };
-        // Si se ingresa una contraseña no vacía, la agregamos
         if (HSPASS.trim() !== "") {
-          updatedUser.HSPASS = HSPASS;
+          newUser.HSPASS = HSPASS;
         }
-        return updatedUser;
+        return newUser;
       },
       didOpen: () => {
         const rolSelect = Swal.getPopup().querySelector("#ROLUSUARIO");
@@ -255,12 +260,20 @@ export const UsuariosScreen = () => {
           <option value="4" ${user.ROLUSUARIO === 4 ? 'selected' : ''}>Camionero</option>
         </select>
         <div style="display:flex; justify-content:center; align-items:center; gap:20px; margin-top:10px;">
-          <label >
-            <input type="checkbox" class="custom-checkbox-users" id="WD_EMAIL" ${user.WD_EMAIL ? 'checked' : ''}/> Notificar por Mail
-          </label>
-          <label >
-            <input type="checkbox" class="custom-checkbox-users" id="WD_WHATSAPP" ${user.WD_WHATSAPP ? 'checked' : ''}/> Notificar por WhatsApp
-          </label>
+          <div class="custom-toggle-notif">
+            <label class="notif-switch">
+              <input type="checkbox" id="WD_EMAIL" ${user.WD_EMAIL ? 'checked' : ''}>
+              <span class="notif-slider"></span>
+            </label>
+            <span>Notificar por Mail</span>
+          </div>
+          <div class="custom-toggle-notif">
+            <label class="notif-switch">
+              <input type="checkbox" id="WD_WHATSAPP" ${user.WD_WHATSAPP ? 'checked' : ''}>
+              <span class="notif-slider"></span>
+            </label>
+            <span>Notificar por WhatsApp</span>
+          </div>
         </div>
         <div id="clienteSelect" style="display: ${user.ROLUSUARIO === 2 ? 'block' : 'none'}; margin-top:10px;">
           <select id="CLIENTEID" class="swal2-input">

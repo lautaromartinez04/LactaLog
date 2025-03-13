@@ -96,7 +96,6 @@ export const AnalisisScreen = () => {
       user.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
       client.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    const matchesId = idSearch ? analisis.ANALISISID.toString().includes(idSearch) : true;
 
     // Filtro por estado (abierto, cerrado, etc.)
     let matchesFilter = true;
@@ -125,7 +124,7 @@ export const AnalisisScreen = () => {
       }
     }
 
-    return matchesGeneral && matchesId && matchesFilter;
+    return matchesGeneral && matchesFilter;
   });
 
   const getClientNameFromAnalisis = (analisis) => {
@@ -184,10 +183,14 @@ export const AnalisisScreen = () => {
   };
 
   const handleVerifyAnomalia = (analisis) => {
+    let info = analisis.ANOMALIA_OBSERVACION.replace(/\. \nE/g, '.<br> • E');
+    info = info.replace(/\a:/g, 'as:<br> • ');
+    info = info.replace(/Anomalías:/g, '<span class="text-danger" style="font-weight: bold; display: block; text-align: center !important; width: 100%;">Anomalías</span>');
+    info = info.replace(/\. \n\. \n/g, ':<br>');
     Swal.fire({
       title: 'Verificar Anomalía',
-      text: `${analisis.ANOMALIA_OBSERVACION || 'Sin descripción'}
-       \n Ingrese una descripción para verificar la anomalía:`,
+      html: `<div style="text-align: left;">${info || 'Sin descripción'} </div>
+       \n <span class="text-info" style="font-weight: bold; display: block; text-align: center !important; width: 100%; margin-top: 10px;">Ingrese una descripción para verificar la anomalía</span>`,
       input: 'text',
       inputPlaceholder: 'Descripción...',
       showCancelButton: true,
@@ -226,9 +229,14 @@ export const AnalisisScreen = () => {
   };
 
   const handleShowAnomaliaDescripcion = (analisis) => {
+    let info = analisis.ANOMALIA_OBSERVACION.replace(/\. \nE/g, '.<br> • E');
+    info = info.replace(/\a:/g, 'as:<br> • '); 
+    info = info.replace(/Anomalías:/g, '<span class="text-danger" style="font-weight: bold; display: block; text-align: center !important; width: 100%;">Anomalías</span>');
+    info = info.replace(/\. \n\. \n/g, ':<br>');
+    info = info.replace(/Verificacion del usuario:/g, '<span class="text-info" style="font-weight: bold; display: block; text-align: center !important; width: 100%; margin-top: 10px;">Verificacion</span>  • ');
     Swal.fire({
       title: 'Descripción de la verificación',
-      text: analisis.ANOMALIA_OBSERVACION || 'Sin descripción',
+      html: `<div style="text-align: left;">${info} </div>`,
       icon: 'info',
       confirmButtonText: 'Cerrar'
     });
@@ -294,7 +302,8 @@ export const AnalisisScreen = () => {
       <h2 className="mb-4">Análisis</h2>
 
       {/* Grupo de botones para filtrar */}
-      <div className="btn-group mb-3">
+      {/* Filtros en escritorio (horizontal) */}
+      <div className="btn-group mb-3 d-none d-md-inline-flex">
         <button
           className={`btn btn-LL-A ${filterType === "" ? "active" : ""}`}
           onClick={() => setFilterType("")}
@@ -327,8 +336,42 @@ export const AnalisisScreen = () => {
         </button>
       </div>
 
+      {/* Filtros en móvil (vertical) */}
+      <div className="d-block d-md-none">
+        <button
+          className={`btn btn-LL-A w-100 mb-2 ${filterType === "" ? "active" : ""}`}
+          onClick={() => setFilterType("")}
+        >
+          Todos
+        </button>
+        <button
+          className={`btn btn-LL-A w-100 mb-2 ${filterType === "open" ? "active" : ""}`}
+          onClick={() => setFilterType("open")}
+        >
+          Abiertos
+        </button>
+        <button
+          className={`btn btn-LL-A w-100 mb-2 ${filterType === "closed" ? "active" : ""}`}
+          onClick={() => setFilterType("closed")}
+        >
+          Cerrados
+        </button>
+        <button
+          className={`btn btn-LL-A w-100 mb-2 ${filterType === "anomalous" ? "active" : ""}`}
+          onClick={() => setFilterType("anomalous")}
+        >
+          Anómalos
+        </button>
+        <button
+          className={`btn btn-LL-A w-100 ${filterType === "anomalousNotVerified" ? "active" : ""}`}
+          onClick={() => setFilterType("anomalousNotVerified")}
+        >
+          No verificados
+        </button>
+      </div>
+
       {/* Buscador */}
-      <div className="mb-3 d-flex">
+      <div className="my-3 d-flex flex-column flex-md-row">
         <input
           type="text"
           className="form-control me-2"
@@ -336,105 +379,103 @@ export const AnalisisScreen = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <input
-          type="text"
-          className="form-control w-auto"
-          placeholder="ID"
-          value={idSearch}
-          onChange={(e) => setIdSearch(e.target.value)}
-        />
       </div>
 
       {/* Tabla de análisis */}
-      <table className="table table-striped table-bordered analisis-table">
-        <thead>
-          <tr>
-            <th>Camionero</th>
-            <th>Cliente</th>
-            <th>Fecha de Análisis</th>
-            <th>Estado</th>
-            <th>Anomalía</th>
-            <th>Anomalía verificada</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredAnalisis.length > 0 ? (
-            filteredAnalisis.map((analisis) => (
-              <tr key={analisis.ANALISISID}>
-                <td>{getUserName(analisis)}</td>
-                <td>{getClientNameFromAnalisis(analisis)}</td>
-                <td>{new Date(analisis.FECHAHORAANALISIS).toLocaleString()}</td>
-                <td>
-                  {analisis.CERRADO ? (
-                    <span style={{ color: 'green', fontWeight: 'bold' }}>Cerrado</span>
-                  ) : (
-                    <span style={{ color: 'red', fontWeight: 'bold' }}>Abierto</span>
-                  )}
-                </td>
-                <td>
-                  {analisis.ANOMALIA ? (
-                    <span style={{ color: 'red', fontWeight: 'bold' }}>Sí</span>
-                  ) : (
-                    <span style={{ color: 'green', fontWeight: 'bold' }}>No</span>
-                  )}
-                </td>
-                <td>
-                  {analisis.ANOMALIA ? (
-                    analisis.ANOMALIA_VERIFICADA ? (
-                      <div
-                        style={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
-                        onClick={() => handleShowAnomaliaDescripcion(analisis)}
-                      >
-                        <span style={{ color: 'green', fontWeight: 'bold' }}>Verificada</span>
-                        <i className="fas fa-info-circle" style={{ marginLeft: "5px", color: "rgb(255, 193, 7)" }}></i>
-                      </div>
-                    ) : (
-                      <>
-                        {userRole !== 2 && (
-                          <>
-                            <button
-                              style={{ fontWeight: 'bold' }}
-                              className="btn btn-warning btn-sm mr-2"
-                              onClick={() => handleVerifyAnomalia(analisis)}
-                            >
-                              Verificar
-                            </button>
-                            <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(analisis)} style={{ marginLeft: "5px", color: "rgb(255, 193, 7)", cursor: "pointer" }}></i>
-                          </>
-                        )}
-                      </>
-                    )
-                  ) : (
-                    <span style={{ color: 'green', fontWeight: 'bold' }}>No requerida</span>
-                  )}
-                </td>
-                <td>
-                  {userRole === 2 ? (
-                    <button
-                      className="btn btn-primary btn-sm"
-                      onClick={() => handleViewClick(analisis)}
-                    >
-                      <i className="fas fa-eye"></i> Ver
-                    </button>
-                  ) : (
-                    <button
-                      className="btn btn-info btn-sm"
-                      onClick={() => handleViewClick(analisis)}
-                    >
-                      <i className="fas fa-eye"></i> Ver
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))
-          ) : (
+      <div className="table-responsive">
+        <table className="table table-striped table-bordered analisis-table">
+          <thead>
             <tr>
-              <td colSpan="7">No se encontraron análisis.</td>
+              <th>Camionero</th>
+              <th>Cliente</th>
+              <th>Fecha de Análisis</th>
+              <th>Estado</th>
+              <th>Anomalía</th>
+              <th>Anomalía verificada</th>
+              <th>Acciones</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredAnalisis.length > 0 ? (
+              filteredAnalisis.map((analisis) => (
+                <tr key={analisis.ANALISISID}>
+                  <td>{getUserName(analisis)}</td>
+                  <td>{getClientNameFromAnalisis(analisis)}</td>
+                  <td>{new Date(analisis.FECHAHORAANALISIS).toLocaleString()}</td>
+                  <td>
+                    {analisis.CERRADO ? (
+                      <span style={{ color: 'green', fontWeight: 'bold' }}>Cerrado</span>
+                    ) : (
+                      <span style={{ color: 'red', fontWeight: 'bold' }}>Abierto</span>
+                    )}
+                  </td>
+                  <td>
+                    {analisis.ANOMALIA ? (
+                      <span style={{ color: 'red', fontWeight: 'bold' }}>Sí</span>
+                    ) : (
+                      <span style={{ color: 'green', fontWeight: 'bold' }}>No</span>
+                    )}
+                  </td>
+                  <td>
+                    {analisis.ANOMALIA ? (
+                      analisis.ANOMALIA_VERIFICADA ? (
+                        <div
+                          style={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+                          onClick={() => handleShowAnomaliaDescripcion(analisis)}
+                        >
+                          <span style={{ color: 'green', fontWeight: 'bold' }}>Verificada</span>
+                          <i className="fas fa-info-circle" style={{ marginLeft: "5px", color: "rgb(255, 193, 7)" }}></i>
+                        </div>
+                      ) : (
+                        <>
+                          {userRole !== 2 ? (
+                            <>
+                              <button
+                                style={{ fontWeight: 'bold' }}
+                                className="btn btn-warning btn-sm mr-2"
+                                onClick={() => handleVerifyAnomalia(analisis)}
+                              >
+                                Verificar
+                              </button>
+                              <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(analisis)} style={{ marginLeft: "5px", color: "rgb(255, 193, 7)", cursor: "pointer" }}></i>
+                            </>
+                          ): (<>
+                          <span className='text-warning' style={{fontWeight:"bold"}}>En espera</span>
+                          <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(analisis)} style={{ marginLeft: "5px", color: "rgb(255, 193, 7)", cursor: "pointer" }}></i>
+                          </>)}
+                        </>
+                      )
+                    ) : (
+                      <span style={{ color: 'green', fontWeight: 'bold' }}>No requerida</span>
+                    )}
+                  </td>
+                  <td>
+                    {userRole === 2 ? (
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => handleViewClick(analisis)}
+                      >
+                        <i className="fas fa-eye"></i> Ver
+                      </button>
+                    ) : (
+                      <button
+                        className="btn btn-info btn-sm"
+                        onClick={() => handleViewClick(analisis)}
+                      >
+                        <i className="fas fa-eye"></i> Ver
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7">No se encontraron análisis.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

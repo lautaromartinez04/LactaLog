@@ -184,7 +184,7 @@ const AnalisisPrint = ({ analisis, userName, clientName }) => {
         </div>
       </div>
       <div>
-        <p className="text-center footer-print-text">© 2025 Don Emilio SRL DEV. Todos los derechos reservados. Documento Legítimo</p>
+        <p className="text-center footer-print-text">© 2025 Powered by Don Emilio SRL DEV. Todos los derechos reservados. Documento Legítimo</p>
       </div>
     </div>
   );

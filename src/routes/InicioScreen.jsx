@@ -222,7 +222,6 @@ export const InicioScreen = () => {
     });
   };
 
-
   // Definir estilos de fondo con gradient para las cards
   const transportBgStyle = {
     background: `linear-gradient(180deg, ${anomaliesTransporte.length > 0 ? '#dc3545' : '#28a745'}, ${openTransports.length > 0 ? '#dc3545' : '#28a745'})`
@@ -249,7 +248,7 @@ export const InicioScreen = () => {
       {userRole === 2 ? (
         <div className="row mb-4" data-aos="flip-up">
           {/* Card: Transportes */}
-          <div className="col-md-6">
+          <div className="col-12 col-md-6">
             <div className="dashboard-card shadow p-3 mb-3 text-white rounded text-center"
               onClick={() => handleClickAnomalies('transportes')}
               style={{ cursor: 'pointer', ...transportBgStyle }}>
@@ -261,7 +260,7 @@ export const InicioScreen = () => {
             </div>
           </div>
           {/* Card: Análisis */}
-          <div className="col-md-6">
+          <div className="col-12 col-md-6">
             <div className="dashboard-card shadow p-3 mb-3 text-white rounded text-center"
               onClick={() => handleClickAnomalies('analisis')}
               style={{ cursor: 'pointer', ...analysisBgStyle }}>
@@ -276,7 +275,7 @@ export const InicioScreen = () => {
       ) : (
         <div className="row mb-4" data-aos="flip-up">
           {/* Card 1: Clientes y Camioneros */}
-          <div className="col-md-4">
+          <div className="col-12 col-md-4">
             <div className="dashboard-card shadow p-3 mb-3 bg-info text-white rounded text-center">
               <h2>{totalClientes}</h2>
               <p>Clientes</p>
@@ -286,7 +285,7 @@ export const InicioScreen = () => {
             </div>
           </div>
           {/* Card 2: Transportes */}
-          <div className="col-md-4">
+          <div className="col-12 col-md-4">
             <div className="dashboard-card shadow p-3 mb-3 text-white rounded text-center"
               onClick={() => handleClickAnomalies('transportes')}
               style={{ cursor: 'pointer', ...transportBgStyle }}>
@@ -298,7 +297,7 @@ export const InicioScreen = () => {
             </div>
           </div>
           {/* Card 3: Análisis */}
-          <div className="col-md-4">
+          <div className="col-12 col-md-4">
             <div className="dashboard-card shadow p-3 mb-3 text-white rounded text-center"
               onClick={() => handleClickAnomalies('analisis')}
               style={{ cursor: 'pointer', ...analysisBgStyle }}>
@@ -313,11 +312,13 @@ export const InicioScreen = () => {
       )}
 
       {/* Botón de Notificaciones */}
-      <div className="mt-4">
-        <button className="btn btn-LL-I" onClick={handleNotificaciones}>
-          Notificaciones
-        </button>
-      </div>
+      {userRole !== 2 ? (
+        <div className="mt-4">
+          <button className="btn btn-LL-I" onClick={handleNotificaciones}>
+            Notificaciones
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 };

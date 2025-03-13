@@ -8,6 +8,16 @@ export const NavBar = ({ isAuthenticated, handleLogout }) => {
   const navigate = useNavigate();
   const userRole = Number(localStorage.getItem('rol'));
 
+  // Función para cerrar el navbar en dispositivos móviles
+  const closeNavbar = () => {
+    const navCollapse = document.getElementById("navbarNav");
+    if (navCollapse) {
+      // Usamos el API de Bootstrap para ocultar el collapse con animación
+      const bsCollapse = new window.bootstrap.Collapse(navCollapse, { toggle: false });
+      bsCollapse.hide();
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.altKey) {
@@ -48,58 +58,63 @@ export const NavBar = ({ isAuthenticated, handleLogout }) => {
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
-      <Link className="navbar-brand" to="#">
-        <img className="logo-Nav-Bar" src={logo} alt="Logo" />
-        <img className="logo-Nav-Bar" src={icono} alt="Icono" />
-      </Link>
-      <button
-        className="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
-      <div className="collapse navbar-collapse" id="navbarNav">
-        <ul className="navbar-nav ml-auto">
-          {isAuthenticated ? (
-            <>
-              <li className="nav-item">
-                <NavLink to="/" className="nav-link">Inicio</NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink to="/Analisis" className="nav-link">Analisis</NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink to="/Transporte" className="nav-link">Transporte</NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink to="/Reportes" className="nav-link">Reportes</NavLink>
-              </li>
-              {userRole !== 2 && (
-                <>
-                  <li className="nav-item">
-                    <NavLink to="/Usuarios" className="nav-link">Usuarios</NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink to="/Clientes" className="nav-link">Clientes</NavLink>
-                  </li>
-                </>
-              )}
-              <li className="nav-item">
-                <button
-                  className="nav-link1 btn-outline-danger btn btn-sm btn-block text-white font-weight-bold btn-link"
-                  onClick={handleLogout}
-                >
-                  Cerrar sesión
-                </button>
-              </li>
-            </>
-          ) : null}
-        </ul>
+      <div className="container">
+        <Link className="navbar-brand d-flex align-items-center" to="/">
+          <img className="logo-Nav-Bar img-fluid" src={logo} alt="Logo" />
+          <img className="logo-Nav-Bar img-fluid" src={icono} alt="Icono" />
+        </Link>
+        {isAuthenticated ? (
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+        ) : null}
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav ml-auto">
+            {isAuthenticated ? (
+              <>
+                <li className="nav-item">
+                  <NavLink to="/" onClick={closeNavbar} className="nav-link">Inicio</NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink to="/Analisis" onClick={closeNavbar} className="nav-link">Analisis</NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink to="/Transporte" onClick={closeNavbar} className="nav-link">Transporte</NavLink>
+                </li>
+                {/* La opción "Reportes" se oculta en dispositivos móviles */}
+                <li className="nav-item d-none d-md-block">
+                  <NavLink to="/Reportes" onClick={closeNavbar} className="nav-link">Reportes</NavLink>
+                </li>
+                {userRole !== 2 && (
+                  <>
+                    <li className="nav-item">
+                      <NavLink to="/Usuarios" onClick={closeNavbar} className="nav-link">Usuarios</NavLink>
+                    </li>
+                    <li className="nav-item">
+                      <NavLink to="/Clientes" onClick={closeNavbar} className="nav-link">Clientes</NavLink>
+                    </li>
+                  </>
+                )}
+                <li className="nav-item">
+                  <button
+                    className="nav-link1 btn-outline-danger btn btn-sm btn-block text-white font-weight-bold btn-link"
+                    onClick={() => { handleLogout(); closeNavbar(); }}
+                  >
+                    Cerrar sesión
+                  </button>
+                </li>
+              </>
+            ) : null}
+          </ul>
+        </div>
       </div>
     </nav>
   );

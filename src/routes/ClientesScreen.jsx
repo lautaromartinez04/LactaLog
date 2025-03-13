@@ -183,9 +183,9 @@ export const ClientesScreen = () => {
   return (
     <div className="container mt-2 mb-2 text-center p-5 bg-light rounded shadow">
       <h2 className="mb-4 text-center">Clientes</h2>
-  
-      {/* Campo de búsqueda */}
-      <div className="mb-4 d-flex">
+
+      {/* Campo de búsqueda y botón para agregar, en vista móvil y escritorio */}
+      <div className="mb-4 d-flex align-items-center">
         <input
           type="text"
           className="form-control"
@@ -193,51 +193,52 @@ export const ClientesScreen = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-  
-        {/* Botón agregar cliente con ícono de más */}
         <button className="btn btn-success ml-2" onClick={handleAddClienteButtonClick}>
           <i className="fas fa-plus"></i>
         </button>
       </div>
-  
+
+
       {/* Tabla de clientes */}
-      <table className="table table-striped table-bordered table-hover">
-        <thead>
-          <tr>
-            <th className='w-100'>Nombre</th>
-            <th className='text-center'>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredClientes.length > 0 ? (
-            filteredClientes.map(cliente => (
-              <tr key={cliente.CLIENTEID}>
-                <td>{cliente.NOMBRE}</td>
-                <td className="d-flex justify-content-center">
-                  <button
-                    className="btn btn-warning btn-sm rounded-circle mr-2"
-                    title='Editar cliente'
-                    onClick={() => handleEditCliente(cliente.CLIENTEID)}
-                  >
-                    <i className="fas fa-pencil-alt"></i>
-                  </button>
-                  <button
-                    className="btn btn-danger btn-sm rounded-circle"
-                    title='Eliminar cliente'
-                    onClick={() => handleDeleteCliente(cliente.CLIENTEID)}
-                  >
-                    <i className="fas fa-trash-alt"></i>
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
+      <div className="table-responsive">
+        <table className="table table-striped table-bordered table-hover">
+          <thead>
             <tr>
-              <td colSpan="2" className="text-center">No hay clientes disponibles</td>
+              <th className="w-100">Nombre</th>
+              <th className="text-center">Acciones</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredClientes.length > 0 ? (
+              filteredClientes.map(cliente => (
+                <tr key={cliente.CLIENTEID}>
+                  <td>{cliente.NOMBRE}</td>
+                  <td className="d-flex justify-content-center">
+                    <button
+                      className="btn btn-warning btn-sm rounded-circle mr-2"
+                      title="Editar cliente"
+                      onClick={() => handleEditCliente(cliente.CLIENTEID)}
+                    >
+                      <i className="fas fa-pencil-alt"></i>
+                    </button>
+                    <button
+                      className="btn btn-danger btn-sm rounded-circle"
+                      title="Eliminar cliente"
+                      onClick={() => handleDeleteCliente(cliente.CLIENTEID)}
+                    >
+                      <i className="fas fa-trash-alt"></i>
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="2" className="text-center">No hay clientes disponibles</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

@@ -5,7 +5,6 @@ import '../styles/login.css';
 import logo from '../media/Logo1.png';
 import icono from '../media/Icono.png';
 
-// Usamos la variable de entorno de Vite
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const LoginScreen = ({ setIsAuthenticated }) => {
@@ -15,12 +14,15 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
   const [hasConnection, setHasConnection] = useState(true);
   const navigate = useNavigate();
 
-  // Verificar conexión con la API haciendo un ping
+  // Verificar conexión con la API
   useEffect(() => {
     fetch(`${API_URL}/ping`)
       .then(res => res.json())
       .then(data => {
-        if ((data.ping && data.ping === "pong") || (data.detail && data.detail === "Error de prueba")) {
+        if (
+          (data.ping && data.ping === "pong") ||
+          (data.detail && data.detail === "Error de prueba")
+        ) {
           setHasConnection(true);
         } else {
           setHasConnection(false);
@@ -30,10 +32,8 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
         setHasConnection(false);
       });
   }, []);
-  
-  
 
-  // Pre-cargar las credenciales del localStorage si están guardadas
+  // Pre-cargar credenciales si están guardadas
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
     const storedPassword = localStorage.getItem('password');
@@ -46,9 +46,7 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
-      // Obtener el token de autenticación
       const tokenResponse = await fetch(`${API_URL}/token`, {
         method: 'POST',
         headers: {
@@ -60,7 +58,7 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
           username,
           password,
           scope: '',
-          client_id: 'string', // Ajusta según corresponda
+          client_id: 'string',
           client_secret: 'string',
         }),
       });
@@ -72,7 +70,6 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
       const tokenData = await tokenResponse.json();
       const accessToken = tokenData.access_token;
 
-      // Obtener la lista de usuarios para verificar el rol y obtener el id
       const usersResponse = await fetch(`${API_URL}/usuarios`, {
         method: 'GET',
         headers: {
@@ -86,15 +83,12 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
       }
 
       const users = await usersResponse.json();
-
-      // Buscar el usuario que coincide con el email ingresado
       const user = users.find((u) => u.EMAIL === username);
 
       if (!user) {
         throw new Error('Usuario no encontrado');
       }
 
-      // Verificar el rol del usuario (por ejemplo, se niega acceso si ROLUSUARIO es 4)
       if (user.ROLUSUARIO === 4) {
         Swal.fire({
           title: "Acceso Denegado",
@@ -105,17 +99,13 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
         return;
       }
 
-      // Guardar el token en localStorage
       localStorage.setItem('token', accessToken);
-      // Guardar el id del usuario logueado en "userIDLogin"
       localStorage.setItem('userIDLogin', user.USUARIOID);
-      // Guardar el rol del usuario y, si es cliente, su CLIENTEID
       localStorage.setItem('rol', user.ROLUSUARIO);
       if (user.ROLUSUARIO === 2) {
         localStorage.setItem('clienteId', user.CLIENTEID);
       }
 
-      // Si se selecciona "Recordar usuario", guardar usuario y contraseña
       if (rememberMe) {
         localStorage.setItem('username', username);
         localStorage.setItem('password', password);
@@ -124,44 +114,33 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
         localStorage.removeItem('password');
       }
 
-      // Autenticar al usuario y redirigir
       setIsAuthenticated(true);
       navigate('/');
     } catch (error) {
-      if (error.message === 'Error de autenticación') {
-        const errorMsg = 'Error de autenticación: Usuario o contraseña incorrectos';
-        Swal.fire({
-          title: errorMsg,
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false
-        });
-      } else if (error.message === 'Error de autenticación') { 
-        const errorMsg = 'Usuario o contraseña incorrectos';
-        Swal.fire({
-          title: errorMsg,
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false
-        });
-      } else {
-        Swal.fire({
-          title: errorMsg,
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false
-        });
-      }
+      let errorMsg = 'Error de autenticación: Usuario o contraseña incorrectos';
+      Swal.fire({
+        title: errorMsg,
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false
+      });
     }
   };
 
-  // Si no hay conexión, se renderiza un contenedor en blanco (podés personalizar el mensaje)
+  // Si no hay conexión, se muestra un mensaje
   if (!hasConnection) {
     return (
-      <div className="container" style={{ userSelect: 'none' }}>
-        <div className="d-flex justify-content-center align-items-center h-100">
-          <img className="" src={icono} style={{ filter: 'grayscale(100%)', userSelect: 'none' }} alt="" />
-          <div className="text-center w-100">
+      <div className="container">
+        <div className="row vh-md-100 d-flex align-items-center">
+          <div className="col-md-6 text-center">
+            <img
+              src={icono}
+              className="img-fluid"
+              style={{ filter: 'grayscale(100%)' }}
+              alt="Logo"
+            />
+          </div>
+          <div className="col-md-6 text-center mb-5 mb-md-0">
             <h1>En este momento la aplicacion web no funciona.</h1>
             <h2>Comuniquese con un administrador.</h2>
             <h4 style={{ color: "#eaa416" }}>Gracias.</h4>
@@ -172,48 +151,56 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
   }
 
   return (
-    <div>
-      <form onSubmit={handleLogin} className="login-form">
-        <div className="d-flex justify-content-center align-items-center">
-          <img src={logo} className="img-login" alt="" />
-          <img src={icono} className="img-login" alt="" />
+    <div className="container d-flex justify-content-center align-items-center my-5 my-md-0">
+      <div className="row justify-content-center w-100 my-5 my-md-0">
+        <div className="col-12 col-md-6">
+          <form onSubmit={handleLogin} className="login-form">
+            <div className="d-flex justify-content-center align-items-center mb-4">
+              <img src={logo} className="img-login" alt="" />
+              <img src={icono} className="img-login" alt="" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="username" className="login-label">Usuario</label>
+              <input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="login-input form-control"
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="password" className="login-label">Contraseña</label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="login-input form-control"
+              />
+            </div>
+            <div className="d-flex align-items-center mb-3">
+              <label htmlFor="rememberMe" className="login-label flex-grow-1">
+                Recordar usuario
+              </label>
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="login-input-checkbox"
+              />
+            </div>
+            <button type="submit" className="btn btn-block btn-login w-100">
+              Iniciar sesión
+            </button>
+          </form>
         </div>
-        <div>
-          <label htmlFor="username" className="login-label">Usuario</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            className="login-input"
-          />
-        </div>
-        <div>
-          <label htmlFor="password" className="login-label">Contraseña</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="login-input"
-          />
-        </div>
-        <div className="d-flex align-items-center mb-2">
-          <label htmlFor="rememberMe" className="login-label w-100">
-            Recordar usuario
-          </label>
-          <input
-            type="checkbox"
-            id="rememberMe"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-            className="login-input-checkbox"
-          />
-        </div>
-        <button type="submit" className="btn btn-block btn-login">Iniciar sesión</button>
-      </form>
+      </div>
     </div>
   );
 };
+
+export default LoginScreen;

@@ -322,13 +322,13 @@ export const AnalisisEdit = ({
           <h2>Detalles del Análisis</h2>
           <div className="container mt-5">
             <div className="row">
-              <div className="col-md-4">
+              <div className="col-12 col-md-4">
                 <p><strong>Camionero:</strong> {userName}</p>
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-md-4">
                 <p><strong>Cliente:</strong> {clientName}</p>
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-md-4">
                 <p>
                   <strong>Fecha y Hora del Análisis:</strong>{' '}
                   {new Date(currentAnalisis.FECHAHORAANALISIS).toLocaleString()}
@@ -342,7 +342,7 @@ export const AnalisisEdit = ({
             {transporteData ? (
               <>
                 <div className="row mt-4">
-                  <div className="col-md-6">
+                  <div className="col-12 col-md-6">
                     <p>
                       <strong>Litros de Leche: </strong>
                       <span className="dotted-line"></span>
@@ -350,7 +350,7 @@ export const AnalisisEdit = ({
                       <span> Litros</span>
                     </p>
                   </div>
-                  <div className="col-md-6">
+                  <div className="col-12 col-md-6">
                     <p>
                       <strong>Temperatura: </strong>
                       <span className="dotted-line"></span>
@@ -360,14 +360,14 @@ export const AnalisisEdit = ({
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-md-6">
+                  <div className="col-12 col-md-6">
                     <p>
                       <strong>Prueba de Alcohol: </strong>
                       <span className="dotted-line"></span>
                       {transporteData.PALCOHOL ? 'Positiva' : 'Negativa'}
                     </p>
                   </div>
-                  <div className="col-md-6">
+                  <div className="col-12 col-md-6">
                     <p>
                       <strong>Fecha del Transporte: </strong>
                       <span className="dotted-line"></span>
@@ -387,7 +387,7 @@ export const AnalisisEdit = ({
             {fieldRows.map((row, rowIndex) => (
               <div className="row" key={rowIndex}>
                 {row.map((field, colIndex) => (
-                  <div className="col-md-4" key={colIndex}>
+                  <div className="col-12 col-md-4" key={colIndex}>
                     <p>
                       <strong>{field.label}: </strong>
                       <span className="dotted-line"></span>
@@ -405,15 +405,15 @@ export const AnalisisEdit = ({
           <hr />
           <div className="container">
             <div className="row">
-              <div className="col-md-6">
+              <div className="col-12 col-md-6">
                 <p><strong>Usuario Modificación: </strong> {modUserName}</p>
               </div>
-              <div className="col-md-6">
+              <div className="col-12 col-md-6">
                 <p><strong>Versión:</strong> {currentAnalisis.VERSION}</p>
               </div>
             </div>
             <div className="row">
-              <div className="col-md-12">
+              <div className="col-12">
                 <p>
                   <strong>Fecha y Hora modificación:</strong>{' '}
                   {new Date(currentAnalisis.FECHAHORAMODIFICACION).toLocaleString()}
@@ -421,17 +421,17 @@ export const AnalisisEdit = ({
               </div>
             </div>
           </div>
-          <div className="d-flex justify-content-between mt-4">
-            <button className="btn btn-warning" onClick={onCancel}>
+          <div className="d-flex flex-column flex-md-row justify-content-between mt-4">
+            <button className="btn btn-warning mb-2 mb-md-0" onClick={onCancel}>
               <i className="fas fa-arrow-left"></i> Volver
             </button>
-            <button className="btn btn-secondary" onClick={handlePrint}>
+            <button className="btn btn-secondary mb-2 mb-md-0" onClick={handlePrint}>
               <i className="fas fa-print"></i> Imprimir
             </button>
             {userRole !== 2 && (
               <>
                 <button
-                  className="btn btn-info"
+                  className="btn btn-info mb-2 mb-md-0"
                   onClick={() => setIsEditing(true)}
                   disabled={currentAnalisis.CERRADO}
                 >
@@ -440,7 +440,7 @@ export const AnalisisEdit = ({
                 {currentAnalisis.CERRADO ? (
                   isManager ? (
                     <button
-                      className="btn btn-success"
+                      className="btn btn-success mb-2 mb-md-0"
                       onClick={handleReopenAnalisis}
                       title="Reabrir Análisis"
                     >
@@ -448,7 +448,7 @@ export const AnalisisEdit = ({
                     </button>
                   ) : (
                     <button
-                      className="btn btn-success disabled"
+                      className="btn btn-success disabled mb-2 mb-md-0"
                       title="Solicite a un administrador para reabrir el análisis"
                       disabled
                     >
@@ -457,7 +457,7 @@ export const AnalisisEdit = ({
                   )
                 ) : (
                   <button
-                    className="btn btn-danger"
+                    className="btn btn-danger mb-2 mb-md-0"
                     onClick={handleCloseAnalisis}
                     title="Cerrar Análisis"
                   >
@@ -475,7 +475,7 @@ export const AnalisisEdit = ({
         <div className="no-print container mt-5">
           <form onSubmit={handleSubmit}>
             <div className="row">
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>Porcentaje de Materia Grasa (%)</label>
                 <input
                   type="number"
@@ -486,7 +486,7 @@ export const AnalisisEdit = ({
                 />
                 <small className="reference-text">{getReferenceText('MG_PORCENTUAL')}</small>
               </div>
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>Gramos de Materia Grasa por litro (g/L)</label>
                 <input
                   type="number"
@@ -497,7 +497,7 @@ export const AnalisisEdit = ({
                 />
                 <small className="reference-text">{getReferenceText('MG_KG')}</small>
               </div>
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>Porcentaje de Proteína (%)</label>
                 <input
                   type="number"
@@ -510,7 +510,7 @@ export const AnalisisEdit = ({
               </div>
             </div>
             <div className="row">
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>Gramos de Proteína por litro (g/L)</label>
                 <input
                   type="number"
@@ -521,7 +521,7 @@ export const AnalisisEdit = ({
                 />
                 <small className="reference-text">{getReferenceText('PROT_KG')}</small>
               </div>
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>Porcentaje de Lactosa (%)</label>
                 <input
                   type="number"
@@ -532,7 +532,7 @@ export const AnalisisEdit = ({
                 />
                 <small className="reference-text">{getReferenceText('LACT_PORCENTUAL')}</small>
               </div>
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>Gramos de Lactosa por litro (g/L)</label>
                 <input
                   type="number"
@@ -545,7 +545,7 @@ export const AnalisisEdit = ({
               </div>
             </div>
             <div className="row">
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>Porcentaje de Sólidos No Grasos (%)</label>
                 <input
                   type="number"
@@ -556,7 +556,7 @@ export const AnalisisEdit = ({
                 />
                 <small className="reference-text">{getReferenceText('SNG_PORCENTUAL')}</small>
               </div>
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>Gramos de Sólidos No Grasos por litro (g/L)</label>
                 <input
                   type="number"
@@ -567,7 +567,7 @@ export const AnalisisEdit = ({
                 />
                 <small className="reference-text">{getReferenceText('SNG_KG')}</small>
               </div>
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>Porcentaje de Sólidos Totales (%)</label>
                 <input
                   type="number"
@@ -580,7 +580,7 @@ export const AnalisisEdit = ({
               </div>
             </div>
             <div className="row">
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>Gramos de Sólidos Totales por litro (g/L)</label>
                 <input
                   type="number"
@@ -591,7 +591,7 @@ export const AnalisisEdit = ({
                 />
                 <small className="reference-text">{getReferenceText('ST_KG')}</small>
               </div>
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>UREA (mg/L)</label>
                 <input
                   type="number"
@@ -602,7 +602,7 @@ export const AnalisisEdit = ({
                 />
                 <small className="reference-text">{getReferenceText('UREA')}</small>
               </div>
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>Unidades Formadoras de Colonias (UFC)</label>
                 <input
                   type="number"
@@ -613,7 +613,7 @@ export const AnalisisEdit = ({
                 />
                 <small className="reference-text">{getReferenceText('UFC')}</small>
               </div>
-              <div className="col-md-4 form-group">
+              <div className="col-12 col-md-4 form-group">
                 <label>Celulas Somáticas</label>
                 <input
                   type="number"
@@ -624,7 +624,7 @@ export const AnalisisEdit = ({
                 />
                 <small className="reference-text">{getReferenceText('CS')}</small>
               </div>
-              <div className="col-md-4 form-group d-flex align-items-center justify-content-center">
+              <div className="col-12 col-md-4 form-group d-flex align-items-center justify-content-center">
                 <label className='mb-1'>Agua</label>
                 <label className="notif-switch ml-2">
                   <input
@@ -638,7 +638,7 @@ export const AnalisisEdit = ({
                   <span className="notif-slider"></span>
                 </label>
               </div>
-              <div className="col-md-4 form-group d-flex align-items-center justify-content-center">
+              <div className="col-12 col-md-4 form-group d-flex align-items-center justify-content-center">
                 <label className='mb-1'>Antibiótico</label>
                 <label className="notif-switch ml-2">
                   <input
@@ -653,13 +653,13 @@ export const AnalisisEdit = ({
                 </label>
               </div>
             </div>
-            <div className="mt-3 d-flex justify-content-between">
-              <button type="submit" className="btn btn-primary">
+            <div className="mt-3 d-flex flex-column flex-md-row justify-content-between">
+              <button type="submit" className="btn btn-primary mb-2 mb-md-0">
                 <i className="fas fa-save mr-2"></i>Guardar
               </button>
               <button
                 type="button"
-                className="btn btn-danger"
+                className="btn btn-danger mb-2 mb-md-0"
                 onClick={() => setIsEditing(false)}
               >
                 <i className="fas fa-arrow-left mr-2"></i>Cancelar Edición

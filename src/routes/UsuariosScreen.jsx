@@ -153,7 +153,7 @@ export const UsuariosScreen = () => {
           return false;
         }
         const TELEFONO = `+549${AREA}${NUMERO}`;
-        // Construir el objeto para el nuevo usuario (sin referenciar variable "user")
+        // Construir el objeto para el nuevo usuario
         const newUser = {
           NOMBRE,
           EMAIL,
@@ -226,7 +226,6 @@ export const UsuariosScreen = () => {
     const tel = user.TELEFONO && user.TELEFONO.startsWith('+549')
       ? user.TELEFONO
       : '';
-    // Suponemos que el teléfono tiene el formato "+54 9" seguido del código y número.
     const cleanTel = tel.substring(4);
     const area = cleanTel.substring(0, 3);
     const numero = cleanTel.substring(3);
@@ -375,7 +374,7 @@ export const UsuariosScreen = () => {
   return (
     <div className="container text-center mt-2 mb-2 p-5 bg-light rounded shadow">
       <h2 className="mb-4 text-center">Usuarios</h2>
-      <div className="d-flex justify-content-center mb-3">
+      <div className="d-flex align-items-center mb-3">
         <input
           type="text"
           className="form-control"
@@ -383,65 +382,67 @@ export const UsuariosScreen = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button className="btn btn-success ml-2" onClick={handleAddUserButtonClick}>
+        <button className="btn btn-success ms-2" onClick={handleAddUserButtonClick}>
           <i className="fas fa-plus"></i>
         </button>
       </div>
-      <table className="table table-striped table-bordered">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Correo</th>
-            <th>Teléfono</th>
-            <th>Rol</th>
-            <th>Notificación (Mail)</th>
-            <th>Notificación (WhatsApp)</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsuarios.length > 0 ? (
-            filteredUsuarios.map((user) => (
-              <tr key={user.USUARIOID}>
-                <td>{user.NOMBRE}</td>
-                <td>{user.EMAIL}</td>
-                <td>{user.TELEFONO}</td>
-                <td>
-                  {user.ROLUSUARIO === 2
-                    ? 'Cliente'
-                    : user.ROLUSUARIO === 3
-                      ? 'Administrativo'
-                      : user.ROLUSUARIO === 4
-                        ? 'Camionero'
-                        : 'Desconocido'}
-                </td>
-                <td>{user.WD_EMAIL ? 'Sí' : 'No'}</td>
-                <td>{user.WD_WHATSAPP ? 'Sí' : 'No'}</td>
-                <td className="d-flex justify-content-center">
-                  <button
-                    className="btn btn-warning btn-sm rounded-circle mr-2"
-                    title="Editar usuario"
-                    onClick={() => handleEditUser(user)}
-                  >
-                    <i className="fas fa-pencil-alt"></i>
-                  </button>
-                  <button
-                    className="btn btn-danger btn-sm rounded-circle"
-                    title="Eliminar usuario"
-                    onClick={() => handleDeleteUser(user.USUARIOID)}
-                  >
-                    <i className="fas fa-trash-alt"></i>
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
+      <div className="table-responsive">
+        <table className="table table-striped table-bordered">
+          <thead>
             <tr>
-              <td colSpan="7">No se encontraron resultados.</td>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Rol</th>
+              <th>Notificación (Mail)</th>
+              <th>Notificación (WhatsApp)</th>
+              <th>Acciones</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredUsuarios.length > 0 ? (
+              filteredUsuarios.map((user) => (
+                <tr key={user.USUARIOID}>
+                  <td>{user.NOMBRE}</td>
+                  <td>{user.EMAIL}</td>
+                  <td>{user.TELEFONO}</td>
+                  <td>
+                    {user.ROLUSUARIO === 2
+                      ? 'Cliente'
+                      : user.ROLUSUARIO === 3
+                        ? 'Administrativo'
+                        : user.ROLUSUARIO === 4
+                          ? 'Camionero'
+                          : 'Desconocido'}
+                  </td>
+                  <td>{user.WD_EMAIL ? 'Sí' : 'No'}</td>
+                  <td>{user.WD_WHATSAPP ? 'Sí' : 'No'}</td>
+                  <td className="d-flex justify-content-center">
+                    <button
+                      className="btn btn-warning btn-sm rounded-circle mr-2"
+                      title="Editar usuario"
+                      onClick={() => handleEditUser(user)}
+                    >
+                      <i className="fas fa-pencil-alt"></i>
+                    </button>
+                    <button
+                      className="btn btn-danger btn-sm rounded-circle"
+                      title="Eliminar usuario"
+                      onClick={() => handleDeleteUser(user.USUARIOID)}
+                    >
+                      <i className="fas fa-trash-alt"></i>
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7">No se encontraron resultados.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

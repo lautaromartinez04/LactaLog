@@ -18,3 +18,18 @@
     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 1));
     user-select: auto;
 }
+
+@media ( max-width: 768px ) {
+    .img-footer-DE{
+        order: 0;
+    }
+
+    .img-footer-DA{
+        order: 1;
+    }
+
+    .img-footer-GM{
+        order: 2;
+    }
+    
+}

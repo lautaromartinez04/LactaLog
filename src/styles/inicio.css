@@ -1,6 +1,7 @@
 .btn-LL-I {
-    background-color: #eaa416;
-    color: white;
+    
+    background-color: #ffffff;
+    color: #eaa416;
     font-weight: bolder;
     border: 2px solid #eaa416;
     outline: none;
@@ -8,8 +9,8 @@
 }
 
 .btn-LL-I:hover {
-    background-color: #ffffff;
-    color: #eaa416;
+    background-color: #eaa416;
+    color: white;
     font-weight: bolder;
     border: 2px solid #eaa416;
 }
@@ -83,4 +84,36 @@
 
 .notif-slider:hover {
     box-shadow: 0 0 3px #eaa416;
+}
+
+.btn-guardar{
+    background-color: #ffffff;
+    color:#eaa416;
+    font-weight: bolder;
+    border: #eaa416 1px solid;
+}
+
+  .btn-guardar:hover{
+    background-color: #eaa416;
+    color:white;
+    font-weight: bolder;
+    border: #eaa416 1px solid;
+} 
+
+.btn-cancelar{
+    background-color: #ffffff;
+    color:#dc3545;
+    font-weight: bolder;
+    border: #dc3545 1px solid;
+}
+
+  .btn-cancelar:hover{
+    background-color: #dc3545;    
+    color:white;
+    font-weight: bolder;
+    border: #dc3545 1px solid;
+}
+
+.btn-outline-warning:hover{
+    color: white !important;
 }

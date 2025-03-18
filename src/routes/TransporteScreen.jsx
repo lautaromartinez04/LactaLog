@@ -123,13 +123,16 @@ export const TransporteScreen = () => {
     let info = transporte.ANOMALIA_OBSERVACION.replace(/\. \nL/g, '.<br> • L');
         info = info.replace(/\a:/g, 'as:<br> • ');
         info = info.replace(/Anomalías:/g, '<span class="text-danger" style="font-weight: bold; display: block; text-align: center !important; width: 100%;">Anomalías</span>');
-        info = info.replace(/\. \n\. \n/g, ':<br>');
-        info = info.replace(/Verificacion del usuario:/g, '<span class="text-info" style="font-weight: bold; display: block; text-align: center !important; width: 100%; margin-top: 10px;">Verificacion del usuario</span>  • ');
+        info = info.replace(/\. \n\. \n/g, '.<br>');
+        info = info.replace(/Verificacion del usuario:/g, '<span class="text-info" style="font-weight: bold; display: block; text-align: center !important; width: 100%; margin-top: 10px;">Verificación</span>  • ');
         Swal.fire({
           title: 'Descripción de la verificación',
           html: `<div style="text-align: left;">${info} </div>`,
           icon: 'info',
-          confirmButtonText: 'Cerrar'
+          confirmButtonText: 'Cerrar',
+          customClass: {
+            confirmButton: 'btn btn-guardar'
+          }
         });
   };
 
@@ -161,6 +164,10 @@ export const TransporteScreen = () => {
       showCancelButton: true,
       confirmButtonText: "Agregar",
       cancelButtonText: "Cancelar",
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      },
       preConfirm: () => {
         const CLIENTEID = Swal.getPopup().querySelector("#CLIENTEID").value;
         const FECHAHORATRANSPORTE = Swal.getPopup().querySelector("#FECHAHORATRANSPORTE").value;
@@ -214,7 +221,11 @@ export const TransporteScreen = () => {
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "Cancelar"
+        cancelButtonText: "Cancelar",
+        customClass: {
+          confirmButton: 'btn btn-guardar',
+          cancelButton: 'btn btn-cancelar'
+        }
       });
       if (!result1.isConfirmed) return;
 
@@ -224,7 +235,11 @@ export const TransporteScreen = () => {
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Sí, eliminar definitivamente",
-        cancelButtonText: "Cancelar"
+        cancelButtonText: "Cancelar",
+        customClass: {
+          confirmButton: 'btn btn-guardar',
+          cancelButton: 'btn btn-cancelar'
+        }
       });
       if (!result2.isConfirmed) return;
 
@@ -233,7 +248,12 @@ export const TransporteScreen = () => {
       });
       if (response.ok) {
         await refreshTransportes();
-        Swal.fire("Éxito", "Transporte eliminado correctamente", "success");
+        Swal.fire({
+          title: "Transporte eliminado correctamente",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
         throw new Error("Error al eliminar el transporte");
       }
@@ -285,6 +305,10 @@ export const TransporteScreen = () => {
       showCancelButton: true,
       confirmButtonText: "Guardar",
       cancelButtonText: "Cancelar",
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      },
       preConfirm: () => {
         const CLIENTEID = Swal.getPopup().querySelector("#CLIENTEID").value;
         const LITROS = Swal.getPopup().querySelector("#LITROS").value;
@@ -330,7 +354,12 @@ export const TransporteScreen = () => {
             item.TRANSPORTEID === originalTransportId ? updatedTransporte : item
           )
         );
-        Swal.fire('Éxito', 'Transporte actualizado correctamente', 'success');
+        Swal.fire({
+          icon: 'success',
+          title: 'Transporte actualizado correctamente',
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
         throw new Error('Error al actualizar el transporte');
       }
@@ -349,7 +378,11 @@ export const TransporteScreen = () => {
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Sí, decomisar",
-        cancelButtonText: "Cancelar"
+        cancelButtonText: "Cancelar",
+        customClass: {
+          confirmButton: 'btn btn-guardar',
+          cancelButton: 'btn btn-cancelar'
+        }
       });
       if (!result1.isConfirmed) return;
   
@@ -360,7 +393,11 @@ export const TransporteScreen = () => {
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Sí, decomisar definitivamente",
-        cancelButtonText: "Cancelar"
+        cancelButtonText: "Cancelar",
+        customClass: {
+          confirmButton: 'btn btn-guardar',
+          cancelButton: 'btn btn-cancelar'
+        }
       });
       if (!result2.isConfirmed) return;
   
@@ -373,6 +410,10 @@ export const TransporteScreen = () => {
         showCancelButton: true,
         confirmButtonText: "Confirmar",
         cancelButtonText: "Cancelar",
+        customClass: {
+          confirmButton: 'btn btn-guardar',
+          cancelButton: 'btn btn-cancelar'
+        },
         inputValidator: (value) => {
           if (!value) {
             return "La descripción es obligatoria!";
@@ -410,9 +451,7 @@ export const TransporteScreen = () => {
   const handleViewAnalisis = async (transporte) => {
     try {
       const response = await fetchWithToken(`${API_URL}/analisis/`, {
-        headers: {
-          "Content-Type": "application/json"
-        }
+        headers: { "Content-Type": "application/json" }
       });
       if (!response.ok) {
         throw new Error("Error al obtener los análisis");
@@ -420,7 +459,8 @@ export const TransporteScreen = () => {
       const analyses = await response.json();
       const relatedAnalysis = analyses.find(a => a.TRANSPORTEID === transporte.TRANSPORTEID);
       if (relatedAnalysis) {
-        setSelectedAnalisis(relatedAnalysis);
+        // Navega a la pantalla de análisis y pasa el ID del análisis relacionado
+        navigate('/analisis', { state: { analysisId: relatedAnalysis.ANALISISID } });
       } else {
         Swal.fire("No se encontró análisis relacionado", "", "warning");
       }
@@ -453,7 +493,13 @@ export const TransporteScreen = () => {
       title: 'Aviso',
       text: 'Una vez cerrado el transporte no podrá ser editado',
       icon: 'warning',
-      confirmButtonText: 'Ok'
+      confirmButtonText: 'Continuar',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      }
     }).then((firstResult) => {
       if (firstResult.isConfirmed) {
         Swal.fire({
@@ -462,7 +508,11 @@ export const TransporteScreen = () => {
           icon: 'question',
           showCancelButton: true,
           confirmButtonText: 'Sí',
-          cancelButtonText: 'No'
+          cancelButtonText: 'No',
+          customClass: {
+            confirmButton: 'btn btn-guardar',
+            cancelButton: 'btn btn-cancelar'
+          }
         }).then(async (secondResult) => {
           if (secondResult.isConfirmed) {
             try {
@@ -477,7 +527,12 @@ export const TransporteScreen = () => {
               if (!response.ok) {
                 throw new Error("Error al cerrar el transporte");
               }
-              Swal.fire("Éxito", "Transporte cerrado correctamente", "success");
+              Swal.fire({
+                title: 'Transporte cerrado correctamente',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500
+              });
               refreshTransportes();
             } catch (error) {
               console.error(error);
@@ -500,7 +555,11 @@ export const TransporteScreen = () => {
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Sí',
-      cancelButtonText: 'No'
+      cancelButtonText: 'No',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      }
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -515,7 +574,12 @@ export const TransporteScreen = () => {
           if (!response.ok) {
             throw new Error("Error al reabrir el transporte");
           }
-          Swal.fire("Éxito", "Transporte reabierto correctamente", "success");
+          Swal.fire({
+            title: 'Transporte reaberto correctamente',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500
+          });
           refreshTransportes();
         } catch (error) {
           console.error(error);
@@ -540,6 +604,10 @@ export const TransporteScreen = () => {
       showCancelButton: true,
       confirmButtonText: 'Verificar',
       cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      },
       inputValidator: (value) => {
         if (!value) {
           return 'La descripción es requerida!';
@@ -563,7 +631,12 @@ export const TransporteScreen = () => {
           if (!response.ok) {
             throw new Error("Error al verificar la anomalía");
           }
-          Swal.fire("Éxito", "Anomalía verificada correctamente", "success");
+          Swal.fire({
+            title: 'Anomalía verificada correctamente',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500
+          });
           refreshTransportes();
         } catch (error) {
           console.error(error);
@@ -741,7 +814,7 @@ export const TransporteScreen = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         {userRole !== 2 && (
-          <button className="btn btn-success transporte-add-btn" onClick={handleAddTransporteButtonClick}>
+          <button className="btn btn-outline-success transporte-add-btn ml-2" onClick={handleAddTransporteButtonClick}>
             <i className="fas fa-plus"></i>
           </button>
         )}
@@ -797,7 +870,7 @@ export const TransporteScreen = () => {
                       {transporte.ANOMALIA ? (
                         transporte.ANOMALIA_VERIFICADA ? (
                           <div
-                            style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+                            style={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
                             onClick={() => handleShowAnomaliaDescripcion(transporte)}
                           >
                             <span style={{ color: 'green', fontWeight: 'bold' }}>Anomalía Verificada</span>
@@ -805,9 +878,9 @@ export const TransporteScreen = () => {
                           </div>
                         ) : (
                           userRole !== 2 ? (
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                               <button
-                                className="btn btn-warning btn-sm mb-2"
+                                className="btn btn-outline-warning btn-sm mb-2"
                                 style={{ cursor: "pointer", fontWeight: "bolder" }}
                                 onClick={() => handleVerifyAnomaliaTransporte(transporte)}
                               >
@@ -852,7 +925,7 @@ export const TransporteScreen = () => {
                   <td className="d-flex justify-content-center">
                     {userRole === 2 ? (
                       <button
-                        className="btn btn-primary btn-sm mr-2"
+                        className="btn btn-outline-primary btn-sm mr-2"
                         title="Ver análisis"
                         onClick={() => handleViewAnalisis(transporte)}
                       >
@@ -863,7 +936,7 @@ export const TransporteScreen = () => {
                         {transporte.CERRADO ? (
                           isAdmin ? (
                             <button
-                              className="btn btn-success btn-sm mr-2"
+                              className="btn btn-outline-success btn-sm mr-2"
                               title="Reabrir transporte"
                               onClick={() => handleReopenTransporte(transporte)}
                             >
@@ -871,7 +944,7 @@ export const TransporteScreen = () => {
                             </button>
                           ) : (
                             <button
-                              className="btn btn-danger btn-sm mr-2"
+                              className="btn btn-outline-danger btn-sm mr-2"
                               title="Transporte cerrado"
                               disabled
                             >
@@ -881,14 +954,14 @@ export const TransporteScreen = () => {
                         ) : (
                           <>
                             <button
-                              className="btn btn-info btn-sm rounded-circle mr-2"
+                              className="btn btn-outline-info btn-sm mr-2"
                               title="Editar transporte"
                               onClick={() => handleEditTransporte(transporte)}
                             >
                               <i className="fas fa-pencil-alt"></i>
                             </button>
                             <button
-                              className="btn btn-danger btn-sm mr-2"
+                              className="btn btn-outline-danger btn-sm mr-2"
                               title="Cerrar transporte"
                               onClick={() => handleCloseTransporte(transporte)}
                             >
@@ -897,7 +970,7 @@ export const TransporteScreen = () => {
                           </>
                         )}
                         <button
-                          className="btn btn-primary btn-sm mr-2"
+                          className="btn btn-outline-primary btn-sm mr-2"
                           title="Ver análisis"
                           onClick={() => handleViewAnalisis(transporte)}
                         >
@@ -906,14 +979,14 @@ export const TransporteScreen = () => {
                         {isAdmin && transporte.DECOMISO !== true && (
                           <>
                             <button
-                              className="btn btn-danger btn-sm mr-2"
+                              className="btn btn-outline-warning btn-sm mr-2"
                               title="Decomisar transporte"
                               onClick={() => handleDecomisarTransporte(transporte)}
                             >
                               <i className="fas fa-exclamation-triangle"></i>
                             </button>
                             <button
-                              className="btn btn-danger btn-sm"
+                              className="btn btn-outline-danger btn-sm"
                               title="Eliminar transporte"
                               onClick={() => handleDeleteTransporte(transporte)}
                             >

@@ -187,10 +187,14 @@ export const AnalisisEdit = ({
   // Función para cerrar el análisis y actualizar el estado local
   const handleCloseAnalisis = () => {
     Swal.fire({
-      title: 'Aviso',
-      text: 'Una vez cerrado el análisis no podrá volver a editarlo',
+      title: 'Una vez cerrado el análisis no podrá volver a editarlo',
       icon: 'warning',
-      confirmButtonText: 'Ok'
+      confirmButtonText: 'Continuar',
+      cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      }
     }).then((firstResult) => {
       if (firstResult.isConfirmed) {
         Swal.fire({
@@ -199,7 +203,11 @@ export const AnalisisEdit = ({
           icon: 'question',
           showCancelButton: true,
           confirmButtonText: 'Sí',
-          cancelButtonText: 'No'
+          cancelButtonText: 'No',
+          customClass: {
+            confirmButton: 'btn btn-guardar',
+            cancelButton: 'btn btn-cancelar'
+          }
         }).then(async (secondResult) => {
           if (secondResult.isConfirmed) {
             try {
@@ -226,7 +234,12 @@ export const AnalisisEdit = ({
               // Actualizamos tanto el estado local como el del padre
               setCurrentAnalisis(updatedAnalysis);
               updateAnalisis(updatedAnalysis);
-              Swal.fire("Éxito", "Análisis cerrado correctamente", "success");
+              Swal.fire({
+                title: 'Análisis cerrado correctamente',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500
+              });
             } catch (error) {
               console.error(error);
               Swal.fire("Error", "No se pudo cerrar el análisis", "error");
@@ -245,7 +258,11 @@ export const AnalisisEdit = ({
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Sí',
-      cancelButtonText: 'No'
+      cancelButtonText: 'No',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      }
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -270,7 +287,12 @@ export const AnalisisEdit = ({
           const updatedAnalysis = await resUpdated.json();
           setCurrentAnalisis(updatedAnalysis);
           updateAnalisis(updatedAnalysis);
-          Swal.fire("Éxito", "Análisis reabierto correctamente", "success");
+          Swal.fire({
+            icon: 'success',
+            title: 'Análisis reabierto correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
         } catch (error) {
           console.error(error);
           Swal.fire("Error", "No se pudo reabrir el análisis", "error");
@@ -319,7 +341,16 @@ export const AnalisisEdit = ({
       {/* Vista de detalles (NO se imprime) */}
       {!isEditing && (
         <div className="no-print container mt-5 mb-5">
-          <h2>Detalles del Análisis</h2>
+          {/* Botón "Volver" posicionado en la parte superior izquierda */}
+          <div className="row">
+            <div className="d-flex flex-column flex-lg-row justify-content-center justify-content-lg-between align-items-center w-100">
+              <h2 className="mt-3 mb-0">Detalles del Análisis</h2>
+              <button className="btn btn-LL-I d-flex align-items-center mt-3 mt-lg-0" onClick={onCancel}>
+                <i className="fas fa-arrow-left mr-2"></i> Volver
+              </button>
+            </div>
+          </div>
+
           <div className="container mt-5">
             <div className="row">
               <div className="col-12 col-md-4">
@@ -421,26 +452,37 @@ export const AnalisisEdit = ({
               </div>
             </div>
           </div>
-          <div className="d-flex flex-column flex-md-row justify-content-between mt-4">
-            <button className="btn btn-warning mb-2 mb-md-0" onClick={onCancel}>
-              <i className="fas fa-arrow-left"></i> Volver
-            </button>
-            <button className="btn btn-secondary mb-2 mb-md-0" onClick={handlePrint}>
+          {/* Grupo de botones inferior (sin el botón "Volver") */}
+          <div className="d-flex flex-column flex-md-row justify-content-between w-100 mt-4">
+            <button className="btn btn-outline-secondary mb-2 mb-md-0" onClick={handlePrint}>
               <i className="fas fa-print"></i> Imprimir
             </button>
             {userRole !== 2 && (
               <>
                 <button
-                  className="btn btn-info mb-2 mb-md-0"
-                  onClick={() => setIsEditing(true)}
-                  disabled={currentAnalisis.CERRADO}
+                  className={`btn btn-outline-info mb-2 mb-md-0 ${currentAnalisis.CERRADO ? 'disabled' : ''}`}
+                  onClick={() => {
+                    if (currentAnalisis.CERRADO) {
+                      Swal.fire({
+                        icon: 'warning',
+                        title: 'Acción no permitida',
+                        text: 'Debe reabrir el análisis para poder editarlo, comuníquese con un administrador.',
+                        confirmButtonText: 'Aceptar',
+                        customClass: {
+                          confirmButton: 'btn btn-guardar'
+                        }
+                      });
+                    } else {
+                      setIsEditing(true);
+                    }
+                  }}
                 >
                   <i className="fas fa-edit"></i> Editar
                 </button>
                 {currentAnalisis.CERRADO ? (
                   isManager ? (
                     <button
-                      className="btn btn-success mb-2 mb-md-0"
+                      className="btn btn-outline-success mb-2 mb-md-0"
                       onClick={handleReopenAnalisis}
                       title="Reabrir Análisis"
                     >
@@ -448,16 +490,30 @@ export const AnalisisEdit = ({
                     </button>
                   ) : (
                     <button
-                      className="btn btn-success disabled mb-2 mb-md-0"
+                      className="btn btn-outline-success disabled mb-2 mb-md-0"
                       title="Solicite a un administrador para reabrir el análisis"
-                      disabled
+                      onClick={() => {
+                        if (currentAnalisis.CERRADO) {
+                          Swal.fire({
+                            icon: 'warning',
+                            title: 'Acción no permitida',
+                            text: 'Comuníquese con un administrador para reabrir el análisis.',
+                            confirmButtonText: 'Aceptar',
+                            customClass: {
+                              confirmButton: 'btn btn-guardar'
+                            }
+                          });
+                        } else {
+                          setIsEditing(true);
+                        }
+                      }}
                     >
                       <i className="fas fa-lock-open"></i> Reabrir Análisis
                     </button>
                   )
                 ) : (
                   <button
-                    className="btn btn-danger mb-2 mb-md-0"
+                    className="btn btn-outline-danger mb-2 mb-md-0"
                     onClick={handleCloseAnalisis}
                     title="Cerrar Análisis"
                   >
@@ -654,12 +710,12 @@ export const AnalisisEdit = ({
               </div>
             </div>
             <div className="mt-3 d-flex flex-column flex-md-row justify-content-between">
-              <button type="submit" className="btn btn-primary mb-2 mb-md-0">
+              <button type="submit" className="btn btn-outline-primary mb-2 mb-md-0">
                 <i className="fas fa-save mr-2"></i>Guardar
               </button>
               <button
                 type="button"
-                className="btn btn-danger mb-2 mb-md-0"
+                className="btn btn-outline-danger mb-2 mb-md-0"
                 onClick={() => setIsEditing(false)}
               >
                 <i className="fas fa-arrow-left mr-2"></i>Cancelar Edición

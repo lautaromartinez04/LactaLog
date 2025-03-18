@@ -1,32 +1,50 @@
 .btn-LL-A {
-    background-color: #eaa416;
-    color: white;
-    font-weight: bolder;
-    border: 2px solid #eaa416;
-    outline: none; /* Si Bootstrap o el navegador aplican un outline, esto a veces no basta */
-  }
-  
-  .btn-LL-A:hover {
-    background-color: #ffffff;
-    color: #eaa416;
-    font-weight: bolder;
-    border: 2px solid #eaa416;
-  }
-  
-  .btn-LL-A:focus,
-  .btn-LL-A:active,
-  .btn-LL-A.focus {
-    outline: none !important; /* El !important asegura que sobrescribas estilos de Bootstrap/navegador */
-    box-shadow: 0 0 0 4px #eaa31663 !important; /* Añade tu “contorno” en color de marca */
-    background-color: #ffffff;
-    color: #eaa416;
-    font-weight: bolder;
-    border: 2px solid #eaa416;
-  }
-  
-  .btn-LL-A.active {
-    /* Por ejemplo, darle un tono más oscuro o distinto al color base */
-    background-color: #ffffff; /* Un tono más oscuro de #eaa416 */
-    border-color: #c88b12;
-    color: #c88b12;
-  }
+  background-color: #ffffff;
+  color: #eaa416;
+  font-weight: bolder;
+  border: 2px solid #eaa416;
+  outline: none;
+  /* Si Bootstrap o el navegador aplican un outline, esto a veces no basta */
+}
+
+.btn-LL-A:hover {
+  background-color: #eaa416;
+  color: white;
+  font-weight: bolder;
+  border: 2px solid #eaa416;
+}
+
+.btn-LL-A:focus,
+.btn-LL-A:active,
+.btn-LL-A.focus {
+  outline: none !important;
+  /* El !important asegura que sobrescribas estilos de Bootstrap/navegador */
+  box-shadow: 0 0 0 4px #eaa31663 !important;
+  /* Añade tu “contorno” en color de marca */
+  background-color: #eaa416;
+  color: #ffffff;
+  font-weight: bolder;
+  border: 2px solid #eaa416;
+}
+
+.btn-LL-A.active {
+  /* Por ejemplo, darle un tono más oscuro o distinto al color base */
+  background-color: #eaa416;
+  color: #ffffff;
+  font-weight: bolder;
+  border: 2px solid #eaa416;
+}
+
+.selected-row {
+  border: #eaa416 3px solid;
+  /* O el color oscuro que prefieras */
+}
+
+button {
+  transition: all 0.05s ease-in-out !important;
+}
+
+button:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}

@@ -81,36 +81,52 @@ export const NavBar = ({ isAuthenticated, handleLogout }) => {
             {isAuthenticated ? (
               <>
                 <li className="nav-item">
-                  <NavLink to="/" onClick={closeNavbar} className="nav-link">Inicio</NavLink>
+                  <NavLink to="/" onClick={closeNavbar} className="nav-link">
+                    <i className="fas fa-home mr-2"></i>
+                    Inicio
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <NavLink to="/Analisis" onClick={closeNavbar} className="nav-link">Analisis</NavLink>
+                  <NavLink to="/Analisis" onClick={closeNavbar} className="nav-link">
+                    <i className="fas fa-rectangle-list mr-2"></i>
+                    Analisis
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <NavLink to="/Transporte" onClick={closeNavbar} className="nav-link">Transporte</NavLink>
+                  <NavLink to="/Transporte" onClick={closeNavbar} className="nav-link">
+                    <i className="fas fa-truck mr-2"></i>
+                    Transporte
+                  </NavLink>
                 </li>
                 {/* La opción "Reportes" se oculta en dispositivos móviles */}
                 <li className="nav-item d-none d-md-block">
-                  <NavLink to="/Reportes" onClick={closeNavbar} className="nav-link">Reportes</NavLink>
+                  <NavLink to="/Reportes" onClick={closeNavbar} className="nav-link">
+                    <i className="fas fa-chart-line mr-2"></i>
+                    Reportes
+                  </NavLink>
                 </li>
                 {userRole !== 2 && (
                   <>
                     <li className="nav-item">
-                      <NavLink to="/Usuarios" onClick={closeNavbar} className="nav-link">Usuarios</NavLink>
+                      <NavLink to="/Usuarios" onClick={closeNavbar} className="nav-link">
+                        <i className="fas fa-user mr-2"></i>
+                        Usuarios
+                      </NavLink>
                     </li>
                     <li className="nav-item">
-                      <NavLink to="/Clientes" onClick={closeNavbar} className="nav-link">Clientes</NavLink>
+                      <NavLink to="/Clientes" onClick={closeNavbar} className="nav-link">
+                        <i className="fas fa-users mr-2"></i>
+                        Clientes
+                      </NavLink>
                     </li>
                   </>
                 )}
-                <li className="nav-item">
-                  <button
-                    className="nav-link1 btn-outline-danger btn btn-sm btn-block text-white font-weight-bold btn-link"
-                    onClick={() => { handleLogout(); closeNavbar(); }}
-                  >
-                    Cerrar sesión
-                  </button>
-                </li>
+                <button
+                  className="nav-link1  btn"
+                  onClick={() => { handleLogout(); closeNavbar(); }}
+                >
+                  Cerrar sesión
+                </button>
               </>
             ) : null}
           </ul>

@@ -3,6 +3,7 @@ import AnalisisEdit from './components/AnalisisEdit';
 import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
 import "../styles/analisis.css";
+import { useLocation } from 'react-router-dom';
 import { getToken, fetchWithToken, removeTokenOnUnload } from '../utils/auth';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -16,12 +17,13 @@ export const AnalisisScreen = () => {
   const [error, setError] = useState(null);
   const [selectedAnalisis, setSelectedAnalisis] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [idSearch, setIdSearch] = useState("");
+  const [lastViewedAnalisisId, setLastViewedAnalisisId] = useState(null);
   // Estado para el filtro seleccionado:
   // Valores posibles: "" (todos), "open", "closed", "anomalous", "anomalousNotVerified"
   const [filterType, setFilterType] = useState("");
 
   const token = getToken();
+  const location = useLocation();
 
   // Obtener rol del usuario y, en caso de cliente (rol 2), su CLIENTEID
   const userRole = Number(localStorage.getItem('rol'));
@@ -30,6 +32,16 @@ export const AnalisisScreen = () => {
   useEffect(() => {
     removeTokenOnUnload();
   }, []);
+
+  useEffect(() => {
+    if (location.state && location.state.analysisId) {
+      const analysisToOpen = analisisList.find(a => a.ANALISISID === location.state.analysisId);
+      if (analysisToOpen) {
+        setSelectedAnalisis(analysisToOpen);
+        setLastViewedAnalisisId(analysisToOpen.ANALISISID);
+      }
+    }
+  }, [location.state, analisisList]);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -141,6 +153,7 @@ export const AnalisisScreen = () => {
   };
 
   const handleViewClick = (analisis) => {
+    setLastViewedAnalisisId(analisis.ANALISISID);
     setSelectedAnalisis(analisis);
     window.scrollTo({
       top: 0,
@@ -167,7 +180,12 @@ export const AnalisisScreen = () => {
       if (selectedAnalisis && selectedAnalisis.ANALISISID === analysisID) {
         setSelectedAnalisis({ ...selectedAnalisis, ...payload });
       }
-      Swal.fire("Éxito", "Análisis actualizado correctamente", "success");
+      Swal.fire({
+        title: "Análisis actualizado correctamente",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500
+      });
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "No se pudo actualizar el análisis", "error");
@@ -195,7 +213,9 @@ export const AnalisisScreen = () => {
       inputPlaceholder: 'Descripción...',
       showCancelButton: true,
       confirmButtonText: 'Verificar',
+      confirmButtonColor: '#eaa416',
       cancelButtonText: 'Cancelar',
+      cancelButtonColor: '#d33',
       inputValidator: (value) => {
         if (!value) {
           return 'La descripción es requerida!';
@@ -218,7 +238,12 @@ export const AnalisisScreen = () => {
           if (!response.ok) {
             throw new Error("Error al verificar la anomalía");
           }
-          Swal.fire("Éxito", "Anomalía verificada correctamente", "success");
+          Swal.fire({
+            icon: 'success',
+            title: 'Anomalía verificada',
+            showConfirmButton: false,
+            timer: 1500
+          });
           refreshAnalisisList();
         } catch (error) {
           console.error(error);
@@ -230,10 +255,10 @@ export const AnalisisScreen = () => {
 
   const handleShowAnomaliaDescripcion = (analisis) => {
     let info = analisis.ANOMALIA_OBSERVACION.replace(/\. \nE/g, '.<br> • E');
-    info = info.replace(/\a:/g, 'as:<br> • '); 
+    info = info.replace(/\a:/g, 'as:<br> • ');
     info = info.replace(/Anomalías:/g, '<span class="text-danger" style="font-weight: bold; display: block; text-align: center !important; width: 100%;">Anomalías</span>');
-    info = info.replace(/\. \n\. \n/g, ':<br>');
-    info = info.replace(/Verificacion del usuario:/g, '<span class="text-info" style="font-weight: bold; display: block; text-align: center !important; width: 100%; margin-top: 10px;">Verificacion</span>  • ');
+    info = info.replace(/\. \n\. \n/g, '.<br>');
+    info = info.replace(/Verificacion del usuario:/g, '<span class="text-info" style="font-weight: bold; display: block; text-align: center !important; width: 100%; margin-top: 10px;">Verificación</span>  • ');
     Swal.fire({
       title: 'Descripción de la verificación',
       html: `<div style="text-align: left;">${info} </div>`,
@@ -398,7 +423,10 @@ export const AnalisisScreen = () => {
           <tbody>
             {filteredAnalisis.length > 0 ? (
               filteredAnalisis.map((analisis) => (
-                <tr key={analisis.ANALISISID}>
+                <tr
+                  key={analisis.ANALISISID}
+                  className={lastViewedAnalisisId === analisis.ANALISISID ? "fila selected-row" : "fila"}
+                >
                   <td>{getUserName(analisis)}</td>
                   <td>{getClientNameFromAnalisis(analisis)}</td>
                   <td>{new Date(analisis.FECHAHORAANALISIS).toLocaleString()}</td>
@@ -432,16 +460,16 @@ export const AnalisisScreen = () => {
                             <>
                               <button
                                 style={{ fontWeight: 'bold' }}
-                                className="btn btn-warning btn-sm mr-2"
+                                className="btn btn-outline-warning btn-sm mr-2"
                                 onClick={() => handleVerifyAnomalia(analisis)}
                               >
                                 Verificar
                               </button>
                               <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(analisis)} style={{ marginLeft: "5px", color: "rgb(255, 193, 7)", cursor: "pointer" }}></i>
                             </>
-                          ): (<>
-                          <span className='text-warning' style={{fontWeight:"bold"}}>En espera</span>
-                          <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(analisis)} style={{ marginLeft: "5px", color: "rgb(255, 193, 7)", cursor: "pointer" }}></i>
+                          ) : (<>
+                            <span className='text-warning' style={{ fontWeight: "bold" }}>En espera</span>
+                            <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(analisis)} style={{ marginLeft: "5px", color: "rgb(255, 193, 7)", cursor: "pointer" }}></i>
                           </>)}
                         </>
                       )
@@ -452,17 +480,19 @@ export const AnalisisScreen = () => {
                   <td>
                     {userRole === 2 ? (
                       <button
-                        className="btn btn-primary btn-sm"
+                        className="btn btn-outline-primary btn-sm"
                         onClick={() => handleViewClick(analisis)}
+                        title='Ver Analisis'
                       >
-                        <i className="fas fa-eye"></i> Ver
+                        <i className="fas fa-eye"></i>
                       </button>
                     ) : (
                       <button
-                        className="btn btn-info btn-sm"
+                        className="btn btn-outline-primary btn-sm"
                         onClick={() => handleViewClick(analisis)}
+                        title='Ver Analisis'
                       >
-                        <i className="fas fa-eye"></i> Ver
+                        <i className="fas fa-eye"></i>
                       </button>
                     )}
                   </td>

@@ -177,6 +177,12 @@ export const InicioScreen = () => {
           `,
       showCancelButton: true,
       confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      },
+      showLoaderOnConfirm: true,
       preConfirm: () => {
         const wdEmail = Swal.getPopup().querySelector('#WD_EMAIL').checked;
         const wdWhatsapp = Swal.getPopup().querySelector('#WD_WHATSAPP').checked;
@@ -208,7 +214,15 @@ export const InicioScreen = () => {
             return response.json();
           })
           .then(updatedUser => {
-            Swal.fire('Éxito', 'Preferencias actualizadas', 'success');
+            Swal.fire(
+              {
+                icon: 'success',
+                title: 'Notificaciones actualizadas',
+                showConfirmButton: false,
+                timer: 1500
+              }
+
+            );
             // Actualizamos el estado para reflejar los cambios
             setDataUsers(prev =>
               prev.map(u => u.USUARIOID === updatedUser.USUARIOID ? updatedUser : u)
@@ -315,6 +329,7 @@ export const InicioScreen = () => {
       {userRole !== 2 ? (
         <div className="mt-4">
           <button className="btn btn-LL-I" onClick={handleNotificaciones}>
+            <i className="fas fa-bell mr-2"></i>
             Notificaciones
           </button>
         </div>

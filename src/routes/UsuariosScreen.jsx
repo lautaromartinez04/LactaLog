@@ -62,7 +62,12 @@ export const UsuariosScreen = () => {
       if (response.ok) {
         const createdUser = await response.json();
         setUsuarios(prev => [...prev, createdUser]);
-        Swal.fire("Éxito", "Usuario agregado correctamente", "success");
+        Swal.fire({
+          icon: 'success',
+          title: 'Usuario agregado correctamente',
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
         throw new Error('Error al agregar el usuario');
       }
@@ -182,7 +187,11 @@ export const UsuariosScreen = () => {
       },
       showCancelButton: true,
       confirmButtonText: 'Agregar',
-      cancelButtonText: 'Cancelar'
+      cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      }
     }).then((result) => {
       if (result.isConfirmed) {
         handleAddUser(result.value);
@@ -198,7 +207,11 @@ export const UsuariosScreen = () => {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
+      cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      }
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -208,7 +221,12 @@ export const UsuariosScreen = () => {
           });
           if (response.ok) {
             setUsuarios(prev => prev.filter(user => user.USUARIOID !== userID));
-            Swal.fire('¡Eliminado!', 'El usuario ha sido eliminado.', 'success');
+            Swal.fire({
+              icon: 'success',
+              title: 'Eliminado correctamente',
+              showConfirmButton: false,
+              timer: 1500
+            });
           } else {
             throw new Error('Error al eliminar el usuario');
           }
@@ -281,8 +299,12 @@ export const UsuariosScreen = () => {
         </div>
       `,
       showCancelButton: true,
-      confirmButtonText: 'Actualizar',
+      confirmButtonText: 'Guardar',
       cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      },
       preConfirm: () => {
         const NOMBRE = Swal.getPopup().querySelector("#NOMBRE").value;
         const EMAIL = Swal.getPopup().querySelector("#EMAIL").value;
@@ -348,7 +370,12 @@ export const UsuariosScreen = () => {
               setUsuarios(prev =>
                 prev.map(u => (u.USUARIOID === updatedUser.USUARIOID ? updatedUser : u))
               );
-              Swal.fire('Éxito', 'Usuario actualizado correctamente', 'success');
+              Swal.fire({
+                icon: 'success',
+                title: 'Usuario actualizado correctamente',
+                showConfirmButton: false,
+                timer: 1500
+              });
             } else {
               throw new Error('Error al actualizar el usuario');
             }
@@ -382,7 +409,7 @@ export const UsuariosScreen = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button className="btn btn-success ms-2" onClick={handleAddUserButtonClick}>
+        <button className="btn btn-outline-success ms-2 ml-2" onClick={handleAddUserButtonClick}>
           <i className="fas fa-plus"></i>
         </button>
       </div>
@@ -419,18 +446,18 @@ export const UsuariosScreen = () => {
                   <td>{user.WD_WHATSAPP ? 'Sí' : 'No'}</td>
                   <td className="d-flex justify-content-center">
                     <button
-                      className="btn btn-warning btn-sm rounded-circle mr-2"
+                      className="btn btn-outline-warning btn-sm mr-2"
                       title="Editar usuario"
                       onClick={() => handleEditUser(user)}
                     >
                       <i className="fas fa-pencil-alt"></i>
                     </button>
                     <button
-                      className="btn btn-danger btn-sm rounded-circle"
+                      className="btn btn-outline-danger btn-sm"
                       title="Eliminar usuario"
                       onClick={() => handleDeleteUser(user.USUARIOID)}
                     >
-                      <i className="fas fa-trash-alt"></i>
+                      <i className="fas fa-trash"></i>
                     </button>
                   </td>
                 </tr>

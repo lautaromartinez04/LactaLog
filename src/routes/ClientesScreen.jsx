@@ -69,7 +69,19 @@ export const ClientesScreen = () => {
       if (response.ok) {
         const addedCliente = await response.json();
         setClientes([...clientes, addedCliente]);
+        Swal.fire({
+          icon: 'success',
+          title: 'Cliente agregado correctamente',
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al agregar el cliente',
+          showConfirmButton: false,
+          timer: 1500
+        });
         throw new Error('Error al agregar el cliente');
       }
     } catch (err) {
@@ -86,6 +98,10 @@ export const ClientesScreen = () => {
       showCancelButton: true,
       confirmButtonText: 'Agregar',
       cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      },
       inputValidator: (value) => {
         if (!value) {
           return 'El nombre no puede estar vacío';
@@ -108,6 +124,10 @@ export const ClientesScreen = () => {
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      }
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -116,7 +136,12 @@ export const ClientesScreen = () => {
           });
           if (response.ok) {
             setClientes(clientes.filter(cliente => cliente.CLIENTEID !== clienteID));
-            Swal.fire('¡Eliminado!', 'El cliente ha sido eliminado.', 'success');
+            Swal.fire({
+              icon: 'success',
+              title: 'Cliente eliminado correctamente',
+              showConfirmButton: false,
+              timer: 1500
+            });
           } else {
             throw new Error('Error al eliminar el cliente');
           }
@@ -136,8 +161,12 @@ export const ClientesScreen = () => {
       input: 'text',
       inputValue: cliente.NOMBRE,
       showCancelButton: true,
-      confirmButtonText: 'Actualizar',
+      confirmButtonText: 'Guardar',
       cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      },
       inputValidator: (value) => {
         if (!value) {
           return 'El nombre no puede estar vacío';
@@ -156,8 +185,19 @@ export const ClientesScreen = () => {
             setClientes(clientes.map(cliente =>
               cliente.CLIENTEID === clienteID ? updatedCliente : cliente
             ));
+            Swal.fire({
+              icon: 'success',
+              title: 'Cliente actualizado correctamente',
+              showConfirmButton: false,
+              timer: 1500
+            });
           } else {
-            throw new Error('Error al actualizar el cliente');
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al actualizar el cliente',
+              showConfirmButton: false,
+              timer: 1500
+            })
           }
         } catch (err) {
           console.error('Error al actualizar cliente:', err);
@@ -193,7 +233,7 @@ export const ClientesScreen = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button className="btn btn-success ml-2" onClick={handleAddClienteButtonClick}>
+        <button className="btn btn-outline-success ml-2" onClick={handleAddClienteButtonClick}>
           <i className="fas fa-plus"></i>
         </button>
       </div>
@@ -215,18 +255,18 @@ export const ClientesScreen = () => {
                   <td>{cliente.NOMBRE}</td>
                   <td className="d-flex justify-content-center">
                     <button
-                      className="btn btn-warning btn-sm rounded-circle mr-2"
+                      className="btn btn-outline-warning btn-sm mr-2"
                       title="Editar cliente"
                       onClick={() => handleEditCliente(cliente.CLIENTEID)}
                     >
                       <i className="fas fa-pencil-alt"></i>
                     </button>
                     <button
-                      className="btn btn-danger btn-sm rounded-circle"
+                      className="btn btn-outline-danger btn-sm"
                       title="Eliminar cliente"
                       onClick={() => handleDeleteCliente(cliente.CLIENTEID)}
                     >
-                      <i className="fas fa-trash-alt"></i>
+                      <i className="fas fa-trash"></i>
                     </button>
                   </td>
                 </tr>

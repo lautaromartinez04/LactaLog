@@ -42,15 +42,16 @@
   }
 
   .btn-login{
-    background-color: #eaa416;
-    color:white;
+    background-color: #ffffff;
+    color:#eaa416;
     font-weight: bolder;
     border: #eaa416 2px solid;
   }
 
   .btn-login:hover{
-    background-color: #ffffff;
-    color:#eaa416;
+    
+    background-color: #eaa416;
+    color:white;
     font-weight: bolder;
     border: #eaa416 2px solid;
   }

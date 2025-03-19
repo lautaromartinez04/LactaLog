@@ -15,7 +15,7 @@ export const Footer = () => {
     if(newCount >= 10){
       Swal.fire({
         title: '🎉 Felicitaciones 🎉',
-        text: '¡Lo encontraste!',
+        text: 'Desarrollado por Fermin Giraudo y Lautaro Martinez',
         imageUrl: surpriseImage,
         imageWidth: 350,
         imageAlt: 'Imagen sorpresa',

@@ -255,7 +255,7 @@ export const ClientesScreen = () => {
                   <td>{cliente.NOMBRE}</td>
                   <td className="d-flex justify-content-center">
                     <button
-                      className="btn btn-outline-warning btn-sm mr-2"
+                      className="btn btn-outline-info btn-sm mr-2"
                       title="Editar cliente"
                       onClick={() => handleEditCliente(cliente.CLIENTEID)}
                     >

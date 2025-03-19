@@ -121,19 +121,19 @@ export const TransporteScreen = () => {
 
   const handleShowAnomaliaDescripcion = (transporte) => {
     let info = transporte.ANOMALIA_OBSERVACION.replace(/\. \nL/g, '.<br> • L');
-        info = info.replace(/\a:/g, 'as:<br> • ');
-        info = info.replace(/Anomalías:/g, '<span class="text-danger" style="font-weight: bold; display: block; text-align: center !important; width: 100%;">Anomalías</span>');
-        info = info.replace(/\. \n\. \n/g, '.<br>');
-        info = info.replace(/Verificacion del usuario:/g, '<span class="text-info" style="font-weight: bold; display: block; text-align: center !important; width: 100%; margin-top: 10px;">Verificación</span>  • ');
-        Swal.fire({
-          title: 'Descripción de la verificación',
-          html: `<div style="text-align: left;">${info} </div>`,
-          icon: 'info',
-          confirmButtonText: 'Cerrar',
-          customClass: {
-            confirmButton: 'btn btn-guardar'
-          }
-        });
+    info = info.replace(/\a:/g, 'as:<br> • ');
+    info = info.replace(/Anomalías:/g, '<span class="text-danger" style="font-weight: bold; display: block; text-align: center !important; width: 100%;">Anomalías</span>');
+    info = info.replace(/\. \n\. \n/g, '.<br>');
+    info = info.replace(/Verificacion del usuario:/g, '<span class="text-info" style="font-weight: bold; display: block; text-align: center !important; width: 100%; margin-top: 10px;">Verificación</span>  • ');
+    Swal.fire({
+      title: 'Descripción de la verificación',
+      html: `<div style="text-align: left;">${info} </div>`,
+      icon: 'info',
+      confirmButtonText: 'Cerrar',
+      customClass: {
+        confirmButton: 'btn btn-guardar'
+      }
+    });
   };
 
   // Función para agregar transporte (solo para usuarios que no sean clientes)
@@ -385,7 +385,7 @@ export const TransporteScreen = () => {
         }
       });
       if (!result1.isConfirmed) return;
-  
+
       // Segunda confirmación
       const result2 = await Swal.fire({
         title: "Confirmar decomiso",
@@ -400,7 +400,7 @@ export const TransporteScreen = () => {
         }
       });
       if (!result2.isConfirmed) return;
-  
+
       // Solicitar la descripción (motivo) del decomiso
       const result3 = await Swal.fire({
         title: "Motivo del decomiso",
@@ -421,7 +421,7 @@ export const TransporteScreen = () => {
         }
       });
       if (!result3.isConfirmed) return;
-  
+
       // Realizar la petición PATCH para decomisar el transporte
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/transporte/${transporte.TRANSPORTEID}/decomiso`, {
@@ -434,7 +434,7 @@ export const TransporteScreen = () => {
           DECOMISO_OBSERVACION: result3.value
         })
       });
-  
+
       if (!response.ok) {
         throw new Error("Error al decomisar el transporte");
       }
@@ -445,7 +445,7 @@ export const TransporteScreen = () => {
       Swal.fire("Error", "No se pudo decomisar el transporte", "error");
     }
   };
-  
+
 
   // Función para ver el análisis relacionado a un transporte
   const handleViewAnalisis = async (transporte) => {
@@ -830,14 +830,14 @@ export const TransporteScreen = () => {
               <th>Camionero</th>
               <th>Fecha Modificación</th>
               <th>Modificador</th>
-              <th>Litros de Leche</th>
+              <th>Litros</th>
               <th>Estado</th>
               <th>Anomalia</th>
-              <th>Verificaciones</th>
+              <th colSpan={2}>Verificaciones</th>
               <th>Acciones</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="">
             {filteredData.length > 0 ? (
               filteredData.map((transporte) => (
                 <tr key={transporte.TRANSPORTEID}>
@@ -865,137 +865,139 @@ export const TransporteScreen = () => {
                     )}
                   </td>
                   {/* Columna de verificaciones */}
-                  <td>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                      {transporte.ANOMALIA ? (
-                        transporte.ANOMALIA_VERIFICADA ? (
-                          <div
-                            style={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
-                            onClick={() => handleShowAnomaliaDescripcion(transporte)}
-                          >
-                            <span style={{ color: 'green', fontWeight: 'bold' }}>Anomalía Verificada</span>
-                            <i className="fas fa-info-circle" style={{ marginLeft: "5px", color: "#FFC107" }}></i>
+                  <td className='flex-fill'>
+                    {transporte.ANOMALIA ? (
+                      transporte.ANOMALIA_VERIFICADA ? (
+                        <div
+                          style={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+                          onClick={() => handleShowAnomaliaDescripcion(transporte)}
+                        >
+                          <span style={{ color: 'green', fontWeight: 'bold' }}>Anomalía Verificada</span>
+                          <i className="fas fa-info-circle" style={{ marginLeft: "5px", color: "#FFC107" }}></i>
+                        </div>
+                      ) : (
+                        userRole !== 2 ? (
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <button
+                              className="btn btn-outline-warning btn-sm mb-2"
+                              style={{ cursor: "pointer", fontWeight: "bolder" }}
+                              onClick={() => handleVerifyAnomaliaTransporte(transporte)}
+                            >
+                              Verificar Anomalía
+                            </button>
+                            <i
+                              className="fas fa-info-circle"
+                              onClick={() => handleShowAnomaliaDescripcion(transporte)}
+                              style={{ marginLeft: "5px", color: "#FFC107", cursor: "pointer" }}
+                            ></i>
                           </div>
                         ) : (
-                          userRole !== 2 ? (
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                              <button
-                                className="btn btn-outline-warning btn-sm mb-2"
-                                style={{ cursor: "pointer", fontWeight: "bolder" }}
-                                onClick={() => handleVerifyAnomaliaTransporte(transporte)}
-                              >
-                                Verificar Anomalía
-                              </button>
+                          <>
+                            <div className='d-flex justify-center align-items-center'>
+                              <span className='text-warning' style={{ fontWeight: "bold" }}>En espera</span>
                               <i
                                 className="fas fa-info-circle"
                                 onClick={() => handleShowAnomaliaDescripcion(transporte)}
                                 style={{ marginLeft: "5px", color: "#FFC107", cursor: "pointer" }}
                               ></i>
                             </div>
-                          ) : (
-                            <>
-                              <div className='d-flex justify-center align-items-center'>
-                                <span className='text-warning' style={{ fontWeight: "bold" }}>En espera</span>
-                                <i
-                                  className="fas fa-info-circle"
-                                  onClick={() => handleShowAnomaliaDescripcion(transporte)}
-                                  style={{ marginLeft: "5px", color: "#FFC107", cursor: "pointer" }}
-                                ></i>
-                              </div>
 
-                            </>
-                          )
+                          </>
                         )
-                      ) : (
-                        <span style={{ color: 'green', fontWeight: 'bold' }}>Sin anomalías</span>
-                      )}
+                      )
+                    ) : (
+                      <span style={{ color: 'green', fontWeight: 'bold' }}>Sin anomalías</span>
+                    )}
+                  </td>
 
-                      {transporte.DECOMISO ? (
-                        <div style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
-                          onClick={() => Swal.fire("Motivo del decomiso", transporte.DECOMISO_OBSERVACION || "No especificado", "info")}>
-                          <span style={{ color: 'red', fontWeight: 'bold' }}>Decomisado</span>
-                          <i className="fas fa-info-circle" style={{ marginLeft: "5px", color: "#FFC107" }}></i>
-                        </div>
-                      ) : (
-                        <span style={{ color: 'green', fontWeight: 'bold' }}>No decomisado</span>
-                      )}
-                    </div>
+                  <td>
+                    {transporte.DECOMISO ? (
+                      <div style={{ display: "flex", alignItems: "center", cursor: "pointer", justifyContent:"center" }}
+                        onClick={() => Swal.fire("Motivo del decomiso", transporte.DECOMISO_OBSERVACION || "No especificado", "info")}>
+                        <span className='text-center' style={{ color: 'red', fontWeight: 'bold'}}>Decomisado</span>
+                        <i className="fas fa-info-circle" style={{ marginLeft: "5px", color: "#FFC107" }}></i>
+                      </div>
+                    ) : (
+                      <span style={{ color: 'green', fontWeight: 'bold' }}>No decomisado</span>
+                    )}
                   </td>
                   {/* Columna de acciones */}
-                  <td className="d-flex justify-content-center">
-                    {userRole === 2 ? (
-                      <button
-                        className="btn btn-outline-primary btn-sm mr-2"
-                        title="Ver análisis"
-                        onClick={() => handleViewAnalisis(transporte)}
-                      >
-                        <i className="fas fa-eye"></i>
-                      </button>
-                    ) : (
-                      <>
-                        {transporte.CERRADO ? (
-                          isAdmin ? (
-                            <button
-                              className="btn btn-outline-success btn-sm mr-2"
-                              title="Reabrir transporte"
-                              onClick={() => handleReopenTransporte(transporte)}
-                            >
-                              <i className="fas fa-lock-open"></i>
-                            </button>
-                          ) : (
-                            <button
-                              className="btn btn-outline-danger btn-sm mr-2"
-                              title="Transporte cerrado"
-                              disabled
-                            >
-                              <i className="fas fa-lock"></i>
-                            </button>
-                          )
-                        ) : (
-                          <>
-                            <button
-                              className="btn btn-outline-info btn-sm mr-2"
-                              title="Editar transporte"
-                              onClick={() => handleEditTransporte(transporte)}
-                            >
-                              <i className="fas fa-pencil-alt"></i>
-                            </button>
-                            <button
-                              className="btn btn-outline-danger btn-sm mr-2"
-                              title="Cerrar transporte"
-                              onClick={() => handleCloseTransporte(transporte)}
-                            >
-                              <i className="fas fa-lock"></i>
-                            </button>
-                          </>
-                        )}
+                  <td>
+                    <div className="d-flex justify-content-center align-items-center flex-fill">
+                      {userRole === 2 ? (
                         <button
-                          className="btn btn-outline-primary btn-sm mr-2"
+                          className="btn btn-outline-primary btn-sm m-1"
                           title="Ver análisis"
                           onClick={() => handleViewAnalisis(transporte)}
                         >
                           <i className="fas fa-eye"></i>
                         </button>
-                        {isAdmin && transporte.DECOMISO !== true && (
-                          <>
-                            <button
-                              className="btn btn-outline-warning btn-sm mr-2"
-                              title="Decomisar transporte"
-                              onClick={() => handleDecomisarTransporte(transporte)}
-                            >
-                              <i className="fas fa-exclamation-triangle"></i>
-                            </button>
-                            <button
-                              className="btn btn-outline-danger btn-sm"
-                              title="Eliminar transporte"
-                              onClick={() => handleDeleteTransporte(transporte)}
-                            >
-                              <i className="fas fa-trash"></i>
-                            </button>
-                          </>
-                        )}
-                      </>
-                    )}
+                      ) : (
+                        <>
+                          {transporte.CERRADO ? (
+                            isAdmin ? (
+                              <button
+                                className="btn btn-outline-success btn-sm m-1"
+                                title="Reabrir transporte"
+                                onClick={() => handleReopenTransporte(transporte)}
+                              >
+                                <i className="fas fa-lock-open"></i>
+                              </button>
+                            ) : (
+                              <button
+                                className="btn btn-outline-danger btn-sm m-1"
+                                title="Transporte cerrado"
+                                disabled
+                              >
+                                <i className="fas fa-lock"></i>
+                              </button>
+                            )
+                          ) : (
+                            <>
+                              <button
+                                className="btn btn-outline-info btn-sm m-1"
+                                title="Editar transporte"
+                                onClick={() => handleEditTransporte(transporte)}
+                              >
+                                <i className="fas fa-pencil-alt"></i>
+                              </button>
+                              <button
+                                className="btn btn-outline-danger btn-sm m-1"
+                                title="Cerrar transporte"
+                                onClick={() => handleCloseTransporte(transporte)}
+                              >
+                                <i className="fas fa-lock"></i>
+                              </button>
+                            </>
+                          )}
+                          <button
+                            className="btn btn-outline-primary btn-sm m-1"
+                            title="Ver análisis"
+                            onClick={() => handleViewAnalisis(transporte)}
+                          >
+                            <i className="fas fa-eye"></i>
+                          </button>
+                          {isAdmin && transporte.DECOMISO !== true && (
+                            <>
+                              <button
+                                className="btn btn-outline-warning btn-sm m-1"
+                                title="Decomisar transporte"
+                                onClick={() => handleDecomisarTransporte(transporte)}
+                              >
+                                <i className="fas fa-exclamation-triangle"></i>
+                              </button>
+                              <button
+                                className="btn btn-outline-danger btn-sm m-1"
+                                title="Eliminar transporte"
+                                onClick={() => handleDeleteTransporte(transporte)}
+                              >
+                                <i className="fas fa-trash"></i>
+                              </button>
+                            </>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))

@@ -76,7 +76,7 @@
   }
   
   .login-input-checkbox:checked:before {
-    transform: translateX(16px); /* Movimiento del círculo cuando está activado */
+    transform: translateX(20px); /* Movimiento del círculo cuando está activado */
   }
   
   .img-login{

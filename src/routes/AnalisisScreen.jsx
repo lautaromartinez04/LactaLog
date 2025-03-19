@@ -416,7 +416,7 @@ export const AnalisisScreen = () => {
               <th>Fecha de Análisis</th>
               <th>Estado</th>
               <th>Anomalía</th>
-              <th>Anomalía verificada</th>
+              <th>Verificación</th>
               <th>Acciones</th>
             </tr>
           </thead>

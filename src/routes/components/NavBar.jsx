@@ -88,7 +88,7 @@ export const NavBar = ({ isAuthenticated, handleLogout }) => {
                 </li>
                 <li className="nav-item">
                   <NavLink to="/Analisis" onClick={closeNavbar} className="nav-link">
-                    <i className="fas fa-rectangle-list mr-2"></i>
+                    <i className="fas fa-edit mr-2"></i>
                     Analisis
                   </NavLink>
                 </li>
@@ -101,7 +101,7 @@ export const NavBar = ({ isAuthenticated, handleLogout }) => {
                 {/* La opción "Reportes" se oculta en dispositivos móviles */}
                 <li className="nav-item d-none d-md-block">
                   <NavLink to="/Reportes" onClick={closeNavbar} className="nav-link">
-                    <i className="fas fa-chart-line mr-2"></i>
+                    <i className="fas fa-bar-chart mr-2"></i>
                     Reportes
                   </NavLink>
                 </li>
@@ -109,7 +109,7 @@ export const NavBar = ({ isAuthenticated, handleLogout }) => {
                   <>
                     <li className="nav-item">
                       <NavLink to="/Usuarios" onClick={closeNavbar} className="nav-link">
-                        <i className="fas fa-user mr-2"></i>
+                        <i className="fas fa-circle-user mr-2"></i>
                         Usuarios
                       </NavLink>
                     </li>
@@ -125,6 +125,7 @@ export const NavBar = ({ isAuthenticated, handleLogout }) => {
                   className="nav-link1  btn"
                   onClick={() => { handleLogout(); closeNavbar(); }}
                 >
+                  <i className="fas fa-sign-out mr-2" style={{ rotate: '180deg' }}></i>
                   Cerrar sesión
                 </button>
               </>

@@ -388,6 +388,18 @@ export const UsuariosScreen = () => {
     });
   };
 
+  const handleNotification = (msg, icon) => {
+    Swal.fire({
+      
+      icon: icon,
+      title: msg,
+      confirmButtonText: 'Aceptar',
+      customClass: {
+        confirmButton: 'btn btn-guardar'
+      }
+    });
+  };
+
   if (loading) {
     return (
       <div className="container text-center mt-5 p-5 w-100 d-flex justify-content-center">
@@ -421,8 +433,7 @@ export const UsuariosScreen = () => {
               <th>Correo</th>
               <th>Teléfono</th>
               <th>Rol</th>
-              <th>Notificación (Mail)</th>
-              <th>Notificación (WhatsApp)</th>
+              <th>Notificación</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -434,19 +445,34 @@ export const UsuariosScreen = () => {
                   <td>{user.EMAIL}</td>
                   <td>{user.TELEFONO}</td>
                   <td>
-                    {user.ROLUSUARIO === 2
-                      ? 'Cliente'
-                      : user.ROLUSUARIO === 3
-                        ? 'Administrativo'
-                        : user.ROLUSUARIO === 4
-                          ? 'Camionero'
-                          : 'Desconocido'}
+                    {user.ROLUSUARIO === 2 ? (
+                      <>
+                        Cliente
+                        <br />
+                        {(clientes.find(c => c.CLIENTEID === user.CLIENTEID) || {}).NOMBRE || ''}
+                      </>
+                    ) : user.ROLUSUARIO === 3 ? (
+                      'Administrativo'
+                    ) : user.ROLUSUARIO === 4 ? (
+                      'Camionero'
+                    ) : (
+                      'Desconocido'
+                    )}
                   </td>
-                  <td>{user.WD_EMAIL ? 'Sí' : 'No'}</td>
-                  <td>{user.WD_WHATSAPP ? 'Sí' : 'No'}</td>
-                  <td className="d-flex justify-content-center">
+                  <td className=" text-center">{user.WD_EMAIL ? (
+                    <i className="fa-solid fa-envelope text-success mr-2" style={{"font-size": "1.3em","cursor":"pointer"}} onClick={() => handleNotification("Este usuario recibe notificaciones por correo","success")}></i>
+                  ) : (
+                    <i className="fa-solid fa-envelope text-danger mr-2" style={{"font-size": "1.3em","cursor":"pointer"}} onClick={() => handleNotification("Este usuario no recibe notificaciones por correo","error")}></i>
+                  )} {user.WD_WHATSAPP ? (
+                    <i className="fa-brands fa-whatsapp text-success ml-2" style={{"font-size": "1.3em","cursor":"pointer"}} onClick={() => handleNotification("Este usuario recibe notificaciones por WhatsApp","success")}></i>
+                  ) : (
+                    <i className="fa-brands fa-whatsapp text-danger ml-2" style={{"font-size": "1.3em","cursor":"pointer"}} onClick={() => handleNotification("Este usuario no recibe notificaciones por WhatsApp","error")}></i>
+                  )
+                  }
+                  </td>
+                  <td>
                     <button
-                      className="btn btn-outline-warning btn-sm mr-2"
+                      className="btn btn-outline-info btn-sm mr-2"
                       title="Editar usuario"
                       onClick={() => handleEditUser(user)}
                     >

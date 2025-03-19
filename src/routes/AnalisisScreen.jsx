@@ -213,9 +213,11 @@ export const AnalisisScreen = () => {
       inputPlaceholder: 'Descripción...',
       showCancelButton: true,
       confirmButtonText: 'Verificar',
-      confirmButtonColor: '#eaa416',
       cancelButtonText: 'Cancelar',
-      cancelButtonColor: '#d33',
+      customClass: {
+        confirmButton: 'btn btn-guardar',
+        cancelButton: 'btn btn-cancelar'
+      },
       inputValidator: (value) => {
         if (!value) {
           return 'La descripción es requerida!';

@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
 import "../styles/usuarios.css";
 import { getToken, fetchWithToken, removeTokenOnUnload } from '../utils/auth';
+import { useLocation } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,6 +13,10 @@ export const UsuariosScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+
+  const location = useLocation();
+  const clientIdFilter = new URLSearchParams(location.search).get('clientId');
+  const clientIdFilterNumber = clientIdFilter ? Number(clientIdFilter) : null;
 
   // Remover token al salir o recargar
   useEffect(() => {
@@ -390,7 +395,7 @@ export const UsuariosScreen = () => {
 
   const handleNotification = (msg, icon) => {
     Swal.fire({
-      
+
       icon: icon,
       title: msg,
       confirmButtonText: 'Aceptar',
@@ -440,7 +445,12 @@ export const UsuariosScreen = () => {
           <tbody>
             {filteredUsuarios.length > 0 ? (
               filteredUsuarios.map((user) => (
-                <tr key={user.USUARIOID}>
+                <tr key={user.USUARIOID}
+                  style={
+                    clientIdFilterNumber && user.CLIENTEID === clientIdFilterNumber
+                      ? { border: '3px solid #eaa416' }
+                      : {}
+                  }>
                   <td>{user.NOMBRE}</td>
                   <td>{user.EMAIL}</td>
                   <td>{user.TELEFONO}</td>
@@ -460,15 +470,15 @@ export const UsuariosScreen = () => {
                     )}
                   </td>
                   <td className=" text-center">{user.WD_EMAIL ? (
-                    <i className="fa-solid fa-envelope text-success mr-2" style={{"font-size": "1.3em","cursor":"pointer"}} onClick={() => handleNotification("Este usuario recibe notificaciones por correo","success")}></i>
+                    <i className="fa-solid fa-envelope text-success mr-2" style={{ "font-size": "1.3em", "cursor": "pointer" }} onClick={() => handleNotification("Este usuario recibe notificaciones por correo", "success")}></i>
                   ) : (
-                    <i className="fa-solid fa-envelope text-danger mr-2" style={{"font-size": "1.3em","cursor":"pointer"}} onClick={() => handleNotification("Este usuario no recibe notificaciones por correo","error")}></i>
+                    <i className="fa-solid fa-envelope text-danger mr-2" style={{ "font-size": "1.3em", "cursor": "pointer" }} onClick={() => handleNotification("Este usuario no recibe notificaciones por correo", "error")}></i>
                   )} {user.WD_WHATSAPP ? (
-                    <i className="fa-brands fa-whatsapp text-success ml-2" style={{"font-size": "1.3em","cursor":"pointer"}} onClick={() => handleNotification("Este usuario recibe notificaciones por WhatsApp","success")}></i>
+                    <i className="fa-brands fa-whatsapp text-success ml-2" style={{ "font-size": "1.3em", "cursor": "pointer" }} onClick={() => handleNotification("Este usuario recibe notificaciones por WhatsApp", "success")}></i>
                   ) : (
-                    <i className="fa-brands fa-whatsapp text-danger ml-2" style={{"font-size": "1.3em","cursor":"pointer"}} onClick={() => handleNotification("Este usuario no recibe notificaciones por WhatsApp","error")}></i>
+                    <i className="fa-brands fa-whatsapp text-danger ml-2" style={{ "font-size": "1.3em", "cursor": "pointer" }} onClick={() => handleNotification("Este usuario no recibe notificaciones por WhatsApp", "error")}></i>
                   )
-                  }
+                    }
                   </td>
                   <td>
                     <button

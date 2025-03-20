@@ -30,6 +30,7 @@ export const InicioScreen = () => {
   // Obtenemos rol y, en caso de cliente, su CLIENTEID
   const userRole = Number(localStorage.getItem('rol'));
   const clienteId = userRole === 2 ? Number(localStorage.getItem('clienteId')) : null;
+  const userId = Number(localStorage.getItem('userIDLogin'));
 
   useEffect(() => {
     removeTokenOnUnload();
@@ -236,6 +237,24 @@ export const InicioScreen = () => {
     });
   };
 
+  const handleGetUserById = async (userId) => {
+    try {
+      const token = getToken();
+      const response = await fetchWithToken(`${API_URL}/usuarios/${userId}`, {
+        method: 'GET'
+      });
+      if (response.ok) {
+        const user = await response.json();
+        return user;
+      } else {
+        throw new Error('Error al obtener el usuario');
+      }
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+
   // Definir estilos de fondo con gradient para las cards
   const transportBgStyle = {
     background: `linear-gradient(180deg, ${anomaliesTransporte.length > 0 ? '#dc3545' : '#28a745'}, ${openTransports.length > 0 ? '#dc3545' : '#28a745'})`
@@ -253,6 +272,7 @@ export const InicioScreen = () => {
       </div>
     );
   }
+  const loggedUser = dataUsers.find(u => u.EMAIL === localStorage.getItem('username')) || {};
 
   return (
     <div className="container mt-2 mb-2 p-5 bg-light shadow text-center Dashboard border">
@@ -290,7 +310,7 @@ export const InicioScreen = () => {
         <div className="row mb-4" data-aos="flip-up">
           {/* Card 1: Clientes y Camioneros */}
           <div className="col-12 col-md-4">
-            <div className="dashboard-card shadow p-3 mb-3 bg-info text-white rounded text-center">
+            <div className="dashboard-card shadow p-3 mb-3 bg-primary text-white rounded text-center">
               <h2>{totalClientes}</h2>
               <p>Clientes</p>
               <hr style={{ margin: '10px 0', borderColor: 'white' }} />
@@ -329,8 +349,18 @@ export const InicioScreen = () => {
       {userRole !== 2 ? (
         <div className="mt-4">
           <button className="btn btn-LL-I" onClick={handleNotificaciones}>
-            <i className="fas fa-bell mr-2"></i>
+            <i className={ loggedUser.WD_EMAIL || loggedUser.WD_WHATSAPP ? 'fas fa-bell mr-2' : 'fas fa-bell-slash mr-2'} ></i>
             Notificaciones
+            {/* Ícono de Mail: verde si WD_EMAIL es true, rojo en caso contrario 
+            <i
+              className={`fas fa-envelope ml-2 ${loggedUser.WD_EMAIL ? 'text-success' : 'text-danger'
+                }`}
+            ></i>
+             Ícono de WhatsApp: verde si WD_WHATSAPP es true, rojo en caso contrario 
+            <i
+              className={`fab fa-whatsapp ml-2 ${loggedUser.WD_WHATSAPP ? 'text-success' : 'text-danger'
+                }`}
+            ></i>*/}
           </button>
         </div>
       ) : null}

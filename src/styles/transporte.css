@@ -58,7 +58,7 @@
   border-radius: 50%;
 }
 .transporte-switch input:checked + .transporte-slider {
-  background-color: #2196F3;
+  background-color: #eaa416;
 }
 
 .transporte-switch input:checked + .transporte-slider:before {

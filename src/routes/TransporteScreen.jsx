@@ -152,7 +152,7 @@ export const TransporteScreen = () => {
           <p class="prueba-label">Prueba de alcohol:</p>
           <div class="transporte-switch-container">
             <span class="negative-label">Negativa</span>
-            <label class="transporte-switch">
+            <label class="transporte-switch m-0">
               <input type="checkbox" id="PALCOHOL" />
               <span class="transporte-slider transporte-round"></span>
             </label>
@@ -844,8 +844,8 @@ export const TransporteScreen = () => {
                   </td>
                   <td>{new Date(transporte.FECHAHORATRANSPORTE).toLocaleString()}</td>
                   <td>{users[transporte.USUARIOID_TRANSPORTE] || transporte.USUARIOID_TRANSPORTE}</td>
-                  <td>{new Date(transporte.FECHAHORAMODIFICACION).toLocaleString()} <br/>por {users[transporte.USUARIOID_MODIFICACION] || transporte.USUARIOID_MODIFICACION}</td>
-                  <td>{transporte.LITROS}</td>
+                  <td>{new Date(transporte.FECHAHORAMODIFICACION).toLocaleString()} <br/><span style={{ fontStyle: 'italic', color: 'gray' }}>por</span> {users[transporte.USUARIOID_MODIFICACION] || transporte.USUARIOID_MODIFICACION}</td>
+                  <td>{transporte.LITROS}<span style={{ fontStyle: 'italic', fontSize: '0.8em', color: 'gray' }}>Lt</span></td>
                   <td>
                     {transporte.CERRADO ? (
                       <span style={{ color: 'green', fontWeight: 'bold' }}>Cerrado</span>

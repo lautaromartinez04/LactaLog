@@ -3,6 +3,7 @@ import Swal from 'sweetalert2'; // Asegúrate de tener SweetAlert2 instalado
 import 'sweetalert2/src/sweetalert2.scss'; // Estilos de SweetAlert2
 import "../styles/transporte.css"; // Hoja de estilos
 import { getToken, fetchWithToken, removeTokenOnUnload } from '../utils/auth';
+import { useNavigate } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,6 +13,12 @@ export const ClientesScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+
+  const navigate = useNavigate();
+
+  const handleViewUsers = (clientId) => {
+    navigate(`/usuarios?clientId=${clientId}`);
+  };
 
   // Remover token al salir o recargar la página
   useEffect(() => {
@@ -223,7 +230,6 @@ export const ClientesScreen = () => {
   return (
     <div className="container mt-2 mb-2 text-center p-5 bg-light rounded shadow">
       <h1 className="mb-4 text-center">Clientes</h1>
-
       {/* Campo de búsqueda y botón para agregar, en vista móvil y escritorio */}
       <div className="mb-4 d-flex align-items-center">
         <input
@@ -255,6 +261,13 @@ export const ClientesScreen = () => {
                   <td>{cliente.NOMBRE}</td>
                   <td className="d-flex justify-content-center">
                     <button
+                      className="btn btn-outline-primary btn-sm mr-2"
+                      title="Ver usuarios relacionados"
+                      onClick={() => handleViewUsers(cliente.CLIENTEID)}
+                    >
+                      <i className="fas fa-user-group"></i>
+                    </button>
+                    <button
                       className="btn btn-outline-info btn-sm mr-2"
                       title="Editar cliente"
                       onClick={() => handleEditCliente(cliente.CLIENTEID)}
@@ -268,6 +281,7 @@ export const ClientesScreen = () => {
                     >
                       <i className="fas fa-trash"></i>
                     </button>
+
                   </td>
                 </tr>
               ))

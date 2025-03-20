@@ -256,7 +256,7 @@ export const InicioScreen = () => {
 
   return (
     <div className="container mt-2 mb-2 p-5 bg-light shadow text-center Dashboard border">
-      <h1 className="mb-5 titulo-font">Bienvenido {loggedUserName}.</h1>
+      <h1 className="mb-5 titulo-font">Bienvenido <span className="h1-nombre-usuario">{loggedUserName}</span></h1>
 
       {/* Dashboard: Si el usuario es cliente (rol 2) se muestran solo 2 cards, sino 3 */}
       {userRole === 2 ? (

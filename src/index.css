@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=Lexend:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=Lexend:wght@100..900&family=Racing+Sans+One&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Lexend', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bolder;
+}
+
+.h1-nombre-usuario{
+    color: #eaa416;
+    font-style: italic;
+}

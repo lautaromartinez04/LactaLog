@@ -12,6 +12,7 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [hasConnection, setHasConnection] = useState(true);
+  const [showPassword, setShowPassword] = useState(false); // Nuevo estado para mostrar/ocultar la contraseña
   const navigate = useNavigate();
 
   // Verificar conexión con la API
@@ -170,16 +171,25 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
                 className="login-input form-control"
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-3 position-relative">
               <label htmlFor="password" className="login-label">Contraseña</label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="login-input form-control"
-              />
+              <div className="d-flex">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="login-input form-control"
+                />
+                  <i className={showPassword ? "fas fa-eye position-absolute color-eye-danger" : "fas fa-eye-slash position-absolute color-eye"} 
+                  style={{ right:0, padding: '10px', cursor: 'pointer'}}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowPassword(!showPassword);
+                  }}></i>
+              </div>
+
             </div>
             <div className="d-flex align-items-center mb-3">
               <label htmlFor="rememberMe" className="login-label flex-grow-1">
@@ -194,6 +204,7 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
               />
             </div>
             <button type="submit" className="btn btn-block btn-login w-100">
+              <i className="fas fa-sign-in mr-2"></i>
               Iniciar sesión
             </button>
           </form>

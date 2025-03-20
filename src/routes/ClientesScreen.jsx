@@ -222,7 +222,7 @@ export const ClientesScreen = () => {
 
   return (
     <div className="container mt-2 mb-2 text-center p-5 bg-light rounded shadow">
-      <h2 className="mb-4 text-center">Clientes</h2>
+      <h1 className="mb-4 text-center">Clientes</h1>
 
       {/* Campo de búsqueda y botón para agregar, en vista móvil y escritorio */}
       <div className="mb-4 d-flex align-items-center">
@@ -241,7 +241,7 @@ export const ClientesScreen = () => {
 
       {/* Tabla de clientes */}
       <div className="table-responsive">
-        <table className="table table-striped table-bordered table-hover">
+        <table className="table table-striped table-bordered">
           <thead>
             <tr>
               <th className="w-100">Nombre</th>

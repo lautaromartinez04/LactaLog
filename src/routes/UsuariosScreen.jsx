@@ -412,7 +412,7 @@ export const UsuariosScreen = () => {
 
   return (
     <div className="container text-center mt-2 mb-2 p-5 bg-light rounded shadow">
-      <h2 className="mb-4 text-center">Usuarios</h2>
+      <h1 className="mb-4 text-center">Usuarios</h1>
       <div className="d-flex align-items-center mb-3">
         <input
           type="text"

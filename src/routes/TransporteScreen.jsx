@@ -720,9 +720,8 @@ export const TransporteScreen = () => {
   });
 
   return (
-    <div className="text-center m-2 p-5 rounded shadow transporte-container border">
-      <h2 className="mb-4">Transporte</h2>
-
+    <div className="text-center m-2 p-1 rounded shadow transporte-container border">
+      <h1 className="mb-4">Transporte</h1>
       {/* Grupo de botones para filtrar */}
       <div className="btn-group mb-3 d-none d-md-block">
         <button
@@ -828,12 +827,11 @@ export const TransporteScreen = () => {
               <th>Cliente</th>
               <th>Fecha Transporte</th>
               <th>Camionero</th>
-              <th>Fecha Modificación</th>
-              <th>Modificador</th>
+              <th>Modificacion</th>
               <th>Litros</th>
               <th>Estado</th>
               <th>Anomalia</th>
-              <th colSpan={2}>Verificaciones</th>
+              <th>Verificaciones</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -846,8 +844,7 @@ export const TransporteScreen = () => {
                   </td>
                   <td>{new Date(transporte.FECHAHORATRANSPORTE).toLocaleString()}</td>
                   <td>{users[transporte.USUARIOID_TRANSPORTE] || transporte.USUARIOID_TRANSPORTE}</td>
-                  <td>{new Date(transporte.FECHAHORAMODIFICACION).toLocaleString()}</td>
-                  <td>{users[transporte.USUARIOID_MODIFICACION] || transporte.USUARIOID_MODIFICACION}</td>
+                  <td>{new Date(transporte.FECHAHORAMODIFICACION).toLocaleString()} <br/>por {users[transporte.USUARIOID_MODIFICACION] || transporte.USUARIOID_MODIFICACION}</td>
                   <td>{transporte.LITROS}</td>
                   <td>
                     {transporte.CERRADO ? (
@@ -908,22 +905,19 @@ export const TransporteScreen = () => {
                     ) : (
                       <span style={{ color: 'green', fontWeight: 'bold' }}>Sin anomalías</span>
                     )}
-                  </td>
-
-                  <td>
                     {transporte.DECOMISO ? (
                       <div style={{ display: "flex", alignItems: "center", cursor: "pointer", justifyContent:"center" }}
-                        onClick={() => Swal.fire("Motivo del decomiso", transporte.DECOMISO_OBSERVACION || "No especificado", "info")}>
+                        onClick={() => Swal.fire({ title: 'Motivo del decomiso', text: "• " + transporte.DECOMISO_OBSERVACION, icon: 'info', confirmButtonText: 'Aceptar', customClass: { confirmButton: 'btn btn-guardar' } })}>
                         <span className='text-center' style={{ color: 'red', fontWeight: 'bold'}}>Decomisado</span>
                         <i className="fas fa-info-circle" style={{ marginLeft: "5px", color: "#FFC107" }}></i>
                       </div>
                     ) : (
-                      <span style={{ color: 'green', fontWeight: 'bold' }}>No decomisado</span>
+                      null
                     )}
                   </td>
                   {/* Columna de acciones */}
-                  <td>
-                    <div className="d-flex justify-content-center align-items-center flex-fill">
+                  <td className="acciones">
+                    <div>
                       {userRole === 2 ? (
                         <button
                           className="btn btn-outline-primary btn-sm m-1"

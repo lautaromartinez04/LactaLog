@@ -326,7 +326,7 @@ export const AnalisisScreen = () => {
 
   return (
     <div className="container mt-2 mb-2 text-center p-5 bg-light rounded shadow analisis-container">
-      <h2 className="mb-4">Análisis</h2>
+      <h1 className="mb-4">Análisis</h1>
 
       {/* Grupo de botones para filtrar */}
       {/* Filtros en escritorio (horizontal) */}

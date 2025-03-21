@@ -265,7 +265,10 @@ export const AnalisisScreen = () => {
       title: 'Descripción de la verificación',
       html: `<div style="text-align: left;">${info} </div>`,
       icon: 'info',
-      confirmButtonText: 'Cerrar'
+      confirmButtonText: 'Aceptar',
+      customClass: {
+        confirmButton: 'btn btn-guardar'
+      }
     });
   };
 

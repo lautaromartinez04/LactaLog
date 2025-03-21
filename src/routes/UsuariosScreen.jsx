@@ -100,7 +100,7 @@ export const UsuariosScreen = () => {
           <label for="TELEFONO" class="w-100">Tel&eacute;fono:</label>
           <div style="display:flex; justify-content: center; gap:5px;">
             <input type="text" id="AREA" class="swal2-input mt-0 mb-3 mx-0 w-25" placeholder="(sin 0)">
-            <input type="text" id="NUMERO" class="swal2-input mt-0 mb-3 mx-0 w-75" placeholder="(sin 15)">
+            <input type="text" id="NUMERO" class="swal2-input mt-0 mb-3 mx-0 w-50" placeholder="(sin 15)">
           </div>
         </div>
         <div style="display:flex; flex-wrap: wrap; justify-content: center;">
@@ -267,9 +267,9 @@ export const UsuariosScreen = () => {
         <!-- Dos inputs para teléfono, en línea -->
         <div style="display:flex; flex-wrap: wrap; justify-content: center;">
           <label for="TELEFONO" class="w-100">Tel&eacute;fono:</label>
-          <div style="display:flex; justify-content: center; gap:5px;">
-            <input type="text" id="AREA" class="swal2-input w-25" placeholder="(sin 0)" value="${area}">
-            <input type="text" id="NUMERO" class="swal2-input w-75" placeholder="(sin 15)" value="${numero}">
+          <div style="display:flex; justify-content: center;">
+            <input type="text" id="AREA" class="swal2-input w-25 mx-0" placeholder="(sin 0)" value="${area}">
+            <input type="text" id="NUMERO" class="swal2-input w-50 mx-0" placeholder="(sin 15)" value="${numero}">
           </div>
         </div>
         <div style="display:flex; flex-wrap: wrap; justify-content: center;">
@@ -281,8 +281,7 @@ export const UsuariosScreen = () => {
           <option value="3" ${user.ROLUSUARIO === 3 ? 'selected' : ''}>Administrativo</option>
           <option value="4" ${user.ROLUSUARIO === 4 ? 'selected' : ''}>Camionero</option>
         </select>
-        <div style="display:flex; justify-content:center; align-items:center; gap:20px; margin-top:10px;">
-          <div class="custom-toggle-notif">
+          <div class="custom-toggle-notif mt-3">
             <label class="notif-switch">
               <input type="checkbox" id="WD_EMAIL" ${user.WD_EMAIL ? 'checked' : ''}>
               <span class="notif-slider"></span>
@@ -296,7 +295,7 @@ export const UsuariosScreen = () => {
             </label>
             <span>Notificar por WhatsApp</span>
           </div>
-        </div>
+        
         <div id="clienteSelect" style="display: ${user.ROLUSUARIO === 2 ? 'block' : 'none'}; margin-top:10px;">
           <select id="CLIENTEID" class="swal2-input">
             ${clientes.map(c => `<option value="${c.CLIENTEID}" ${c.CLIENTEID === user.CLIENTEID ? 'selected' : ''}>${c.NOMBRE}</option>`).join('')}

@@ -6,7 +6,7 @@ import 'sweetalert2/src/sweetalert2.scss';
 import "../styles/transporte.css";
 
 // Importamos las funciones de autenticación
-import { getToken, fetchWithToken, removeTokenOnUnload } from '../utils/auth';
+import { getToken, fetchWithToken, removeTokenOnUnload, removeTokenOnPage } from '../utils/auth';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -34,6 +34,7 @@ export const TransporteScreen = () => {
   // Remover token al salir de la página
   useEffect(() => {
     removeTokenOnUnload();
+    removeTokenOnPage();
   }, []);
 
   // Función para refrescar la lista de transportes (para actualizar la tabla sin recargar)

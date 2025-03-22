@@ -67,5 +67,13 @@ export const fetchWithToken = async (url, options = {}) => {
 
 // Remueve el token al salir o recargar la página.
 export const removeTokenOnUnload = () => {
-  window.addEventListener('beforeunload', () => localStorage.removeItem('token'));
+  window.addEventListener('beforeunload', () => {
+    localStorage.removeItem('token');
+  });
+};
+
+export const removeTokenOnPage = () => {
+  window.addEventListener('pagehide', () => {
+    localStorage.removeItem('token');
+  });
 };

@@ -1,5 +1,7 @@
 import { height } from '@fortawesome/free-solid-svg-icons/fa0';
 import React, { useState } from 'react';
+import { getToken, fetchWithToken, removeTokenOnUnload, removeTokenOnPage } from '../utils/auth';
+import { use } from 'react';
 
 export const ReportesScreen = () => {
   const [iframeLoaded, setIframeLoaded] = useState(false);
@@ -7,6 +9,11 @@ export const ReportesScreen = () => {
   const handleIframeLoad = () => {
     setIframeLoaded(true);
   };
+
+  useEffect(() => {
+    removeTokenOnUnload();
+    removeTokenOnPage();
+  }, []);
 
   return (
     <div className="w-100" >

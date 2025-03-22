@@ -14,7 +14,7 @@ export const AnalisisEdit = ({
   userName,
   clientName
 }) => {
-  // Creamos un estado local para el análisis actual que se mostrará
+  // Estado local para el análisis actual que se mostrará
   const [currentAnalisis, setCurrentAnalisis] = useState(analisis);
   // Modo edición local: false = vista de detalles, true = formulario de edición
   const [isEditing, setIsEditing] = useState(false);
@@ -23,6 +23,24 @@ export const AnalisisEdit = ({
   useEffect(() => {
     setCurrentAnalisis(analisis);
   }, [analisis]);
+
+  // Nuevo useEffect: al montar el componente se vuelve a hacer fetch del análisis
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (analisis.ANALISISID && token) {
+      fetch(`${API_URL}/analisis/${analisis.ANALISISID}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          setCurrentAnalisis(data);
+        })
+        .catch(err => console.error("Error fetching análisis:", err));
+    }
+  }, [analisis.ANALISISID]);
 
   // Estado para los campos editables del análisis
   const [formData, setFormData] = useState({
@@ -139,9 +157,7 @@ export const AnalisisEdit = ({
       ANTIBIOTICO: formData.ANTIBIOTICO,
       VERSION: currentAnalisis.VERSION + 1
     };
-    // Se llama al callback onSave
     onSave(currentAnalisis.ANALISISID, payload);
-    // Actualizamos el estado local manualmente (suponiendo que onSave actualizará el análisis en el padre más adelante)
     setCurrentAnalisis(prev => ({ ...prev, ...payload }));
     setIsEditing(false);
   };

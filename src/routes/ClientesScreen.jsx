@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2'; // Asegúrate de tener SweetAlert2 instalado
 import 'sweetalert2/src/sweetalert2.scss'; // Estilos de SweetAlert2
 import "../styles/transporte.css"; // Hoja de estilos
-import { getToken, fetchWithToken, removeTokenOnUnload } from '../utils/auth';
+import { getToken, fetchWithToken, removeTokenOnUnload, removeTokenOnPage } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -23,6 +23,7 @@ export const ClientesScreen = () => {
   // Remover token al salir o recargar la página
   useEffect(() => {
     removeTokenOnUnload();
+    removeTokenOnPage();
   }, []);
 
   // Obtener la lista de clientes

@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
 import "../styles/analisis.css";
 import { useLocation } from 'react-router-dom';
-import { getToken, fetchWithToken, removeTokenOnUnload } from '../utils/auth';
+import { getToken, fetchWithToken, removeTokenOnUnload, removeTokenOnPage } from '../utils/auth';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -31,6 +31,7 @@ export const AnalisisScreen = () => {
 
   useEffect(() => {
     removeTokenOnUnload();
+    removeTokenOnPage();
   }, []);
 
   useEffect(() => {

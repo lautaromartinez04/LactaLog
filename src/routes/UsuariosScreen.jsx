@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
 import "../styles/usuarios.css";
-import { getToken, fetchWithToken, removeTokenOnUnload } from '../utils/auth';
+import { getToken, fetchWithToken, removeTokenOnUnload, removeTokenOnPage } from '../utils/auth';
 import { useLocation } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -21,6 +21,7 @@ export const UsuariosScreen = () => {
   // Remover token al salir o recargar
   useEffect(() => {
     removeTokenOnUnload();
+    removeTokenOnPage();
   }, []);
 
   // Cargar usuarios y clientes

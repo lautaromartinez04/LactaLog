@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getToken, fetchWithToken, removeTokenOnUnload } from '../utils/auth';
+import { getToken, fetchWithToken, removeTokenOnUnload, removeTokenOnPage } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import "../styles/inicio.css";
@@ -34,6 +34,7 @@ export const InicioScreen = () => {
 
   useEffect(() => {
     removeTokenOnUnload();
+    removeTokenOnPage();
   }, []);
 
   useEffect(() => {

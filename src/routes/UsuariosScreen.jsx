@@ -422,7 +422,7 @@ export const UsuariosScreen = () => {
 
   if (loading) {
     return (
-      <div className="container text-center mt-5 p-5 w-100 d-flex justify-content-center">
+      <div className="container text-center text-warning mt-5 p-5 w-100 d-flex justify-content-center">
         <div className="spinner-border" role="status">
           <span className="visually-hidden"></span>
         </div>

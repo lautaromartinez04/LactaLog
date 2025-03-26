@@ -118,9 +118,8 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
       setIsAuthenticated(true);
       navigate('/');
     } catch (error) {
-      let errorMsg = 'Error de autenticación: Usuario o contraseña incorrectos';
       Swal.fire({
-        title: errorMsg,
+        title: 'Usuario o contraseña incorrectos',
         icon: "error",
         timer: 2000,
         showConfirmButton: false

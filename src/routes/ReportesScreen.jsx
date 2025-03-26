@@ -1,5 +1,5 @@
 import { height } from '@fortawesome/free-solid-svg-icons/fa0';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getToken, fetchWithToken, removeTokenOnUnload, removeTokenOnPage } from '../utils/auth';
 import { use } from 'react';
 

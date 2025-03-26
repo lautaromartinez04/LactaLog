@@ -64,10 +64,20 @@ export const TransporteScreen = () => {
         throw new Error("Error al actualizar el análisis");
       }
       setSelectedAnalisis(null);
-      Swal.fire("Éxito", "Análisis actualizado correctamente", "success");
+      Swal.fire({
+        title: "Análisis actualizado correctamente",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500
+      });
     } catch (err) {
       console.error(err);
-      Swal.fire("Error", "No se pudo actualizar el análisis", "error");
+      Swal.fire({
+        title: "Error al actualizar el análisis",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
   };
 
@@ -204,13 +214,23 @@ export const TransporteScreen = () => {
       });
       if (response.ok) {
         await refreshTransportes();
-        Swal.fire("Éxito", "Transporte agregado correctamente", "success");
+        Swal.fire({
+          title: "Transporte agregado correctamente",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
         throw new Error("Error al agregar el transporte");
       }
     } catch (err) {
       console.error("Error:", err);
-      Swal.fire("Error", "No se pudo agregar el transporte", "error");
+      Swal.fire({
+        title: "Error al agregar el transporte",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
   };
 
@@ -260,7 +280,12 @@ export const TransporteScreen = () => {
       }
     } catch (err) {
       console.error("Error:", err);
-      Swal.fire("Error", "No se pudo eliminar el transporte", "error");
+      Swal.fire({
+        title: "Error al eliminar el transporte",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
   };
 
@@ -366,7 +391,12 @@ export const TransporteScreen = () => {
       }
     } catch (err) {
       console.error('Error:', err);
-      Swal.fire('Error', 'No se pudo actualizar el transporte', 'error');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al actualizar el transporte',
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
   };
 
@@ -439,11 +469,21 @@ export const TransporteScreen = () => {
       if (!response.ok) {
         throw new Error("Error al decomisar el transporte");
       }
-      Swal.fire("Éxito", "Transporte decomisado correctamente", "success");
+      Swal.fire({
+        icon: "success",
+        title: "Transporte decomisado correctamente",
+        showConfirmButton: false,
+        timer: 1500
+      });
       refreshTransportes();
     } catch (error) {
       console.error("Error:", error);
-      Swal.fire("Error", "No se pudo decomisar el transporte", "error");
+      Swal.fire({
+        icon: "error",
+        title: "Error al decomisar el transporte",
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
   };
 
@@ -463,11 +503,21 @@ export const TransporteScreen = () => {
         // Navega a la pantalla de análisis y pasa el ID del análisis relacionado
         navigate('/analisis', { state: { analysisId: relatedAnalysis.ANALISISID } });
       } else {
-        Swal.fire("No se encontró análisis relacionado", "", "warning");
+        Swal.fire({
+          title: "No hay análisis relacionados",
+          icon: "info",
+          showConfirmButton: false,
+          timer: 1500
+        });
       }
     } catch (err) {
       console.error(err);
-      Swal.fire("Error", "No se pudo obtener el análisis", "error");
+      Swal.fire({
+        title: "Error al obtener los análisis",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
   };
 
@@ -537,7 +587,12 @@ export const TransporteScreen = () => {
               refreshTransportes();
             } catch (error) {
               console.error(error);
-              Swal.fire("Error", "No se pudo cerrar el transporte", "error");
+              Swal.fire({
+                title: 'Error al cerrar el transporte',
+                icon: 'error',
+                showConfirmButton: false,
+                timer: 1500
+              });
             }
           }
         });
@@ -584,7 +639,12 @@ export const TransporteScreen = () => {
           refreshTransportes();
         } catch (error) {
           console.error(error);
-          Swal.fire("Error", "No se pudo reabrir el transporte", "error");
+          Swal.fire({
+            title: 'Error al reabrir el transporte',
+            icon: 'error',
+            showConfirmButton: false,
+            timer: 1500
+          });
         }
       }
     });
@@ -641,7 +701,12 @@ export const TransporteScreen = () => {
           refreshTransportes();
         } catch (error) {
           console.error(error);
-          Swal.fire("Error", "No se pudo verificar la anomalía", "error");
+          Swal.fire({
+            title: 'Error al verificar la anomalía',
+            icon: 'error',
+            showConfirmButton: false,
+            timer: 1500
+          });
         }
       }
     });
@@ -670,8 +735,9 @@ export const TransporteScreen = () => {
   }
   if (error) {
     return (
-      <div className="container text-center mt-5 p-5 bg-light rounded shadow">
-        <p>Error: {error}</p>
+      <div className="container text-center mt-5 p-5 bg-light bold">
+        <h1>Error al cargar los transportes</h1>
+        <p>{error}</p>
       </div>
     );
   }

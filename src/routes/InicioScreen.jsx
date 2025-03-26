@@ -232,7 +232,12 @@ export const InicioScreen = () => {
           })
           .catch(err => {
             console.error(err);
-            Swal.fire('Error', 'No se pudo actualizar las notificaciones', 'error');
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al actualizar las notificaciones',
+              showConfirmButton: false,
+              timer: 1500
+            });
           });
       }
     });

@@ -189,7 +189,12 @@ export const AnalisisScreen = () => {
       });
     } catch (err) {
       console.error(err);
-      Swal.fire("Error", "No se pudo actualizar el análisis", "error");
+      Swal.fire({
+        title: "Error al actualizar el análisis",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
   };
 
@@ -250,7 +255,12 @@ export const AnalisisScreen = () => {
           refreshAnalisisList();
         } catch (error) {
           console.error(error);
-          Swal.fire("Error", "No se pudo verificar la anomalía", "error");
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al verificar la anomalía',
+            showConfirmButton: false,
+            timer: 1500
+          });
         }
       }
     });
@@ -310,7 +320,10 @@ export const AnalisisScreen = () => {
 
   if (error) {
     return (
-      <div className="container text-center mt-5 p-5">Error: {error}</div>
+      <div className="container text-center mt-5 p-5 bg-light bold">
+        <h1>Error al obtener análisis</h1>
+        <p>{error}</p>
+      </div>
     );
   }
 

@@ -155,7 +155,12 @@ export const ClientesScreen = () => {
           }
         } catch (err) {
           console.error('Error al eliminar cliente:', err);
-          Swal.fire('Error', 'Hubo un problema al eliminar el cliente.', 'error');
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al eliminar el cliente',
+            showConfirmButton: false,
+            timer: 1500
+          });
         }
       }
     });
@@ -225,7 +230,10 @@ export const ClientesScreen = () => {
   }
 
   if (error) {
-    return <div className="alert alert-danger" role="alert">{error}</div>;
+    return <div className="container text-center mt-5 p-5 bg-light bold">
+      <h1>Error al cargar los clientes</h1>
+      <p>{error}</p>
+    </div>;
   }
 
   return (

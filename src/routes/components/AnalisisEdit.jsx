@@ -258,7 +258,12 @@ export const AnalisisEdit = ({
               });
             } catch (error) {
               console.error(error);
-              Swal.fire("Error", "No se pudo cerrar el análisis", "error");
+              Swal.fire({
+                title: 'Error al cerrar el análisis',
+                icon: 'error',
+                showConfirmButton: false,
+                timer: 1500
+              });
             }
           }
         });
@@ -311,7 +316,12 @@ export const AnalisisEdit = ({
           });
         } catch (error) {
           console.error(error);
-          Swal.fire("Error", "No se pudo reabrir el análisis", "error");
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al reabrir el análisis',
+            showConfirmButton: false,
+            timer: 1500
+          });
         }
       }
     });

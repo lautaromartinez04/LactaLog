@@ -79,7 +79,12 @@ export const UsuariosScreen = () => {
       }
     } catch (err) {
       console.error("Error:", err);
-      Swal.fire("Error", "No se pudo agregar el usuario", "error");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al agregar el usuario',
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
   };
 
@@ -238,7 +243,12 @@ export const UsuariosScreen = () => {
           }
         } catch (err) {
           console.error('Error al eliminar el usuario:', err);
-          Swal.fire('Error', 'No se pudo eliminar el usuario', 'error');
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al eliminar el usuario',
+            showConfirmButton: false,
+            timer: 1500
+          });
         }
       }
     });
@@ -387,7 +397,12 @@ export const UsuariosScreen = () => {
           })
           .catch(err => {
             console.error('Error al actualizar el usuario:', err);
-            Swal.fire('Error', 'No se pudo actualizar el usuario', 'error');
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al actualizar el usuario',
+              showConfirmButton: false,
+              timer: 1500
+            });
           });
       }
     });
@@ -411,6 +426,15 @@ export const UsuariosScreen = () => {
         <div className="spinner-border" role="status">
           <span className="visually-hidden"></span>
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container text-center mt-5 p-5 bg-light bold">
+        <h1>Error al cargar los usuarios</h1>
+        <p>{error}</p>
       </div>
     );
   }

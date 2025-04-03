@@ -111,7 +111,6 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
         localStorage.setItem('username', username);
         localStorage.setItem('password', password);
       } else {
-        localStorage.removeItem('username');
         localStorage.removeItem('password');
       }
 
@@ -128,6 +127,7 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
   };
 
   // Si no hay conexión, se muestra un mensaje
+  
   if (!hasConnection) {
     return (
       <div className="container">

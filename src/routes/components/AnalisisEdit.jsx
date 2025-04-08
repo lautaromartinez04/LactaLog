@@ -383,7 +383,7 @@ export const AnalisisEdit = ({
                 <p><strong>Camionero:</strong> {userName}</p>
               </div>
               <div className="col-12 col-md-4">
-                <p><strong>Cliente:</strong> {clientName}</p>
+                <p><strong>Proveedor:</strong> {clientName}</p>
               </div>
               <div className="col-12 col-md-4">
                 <p>

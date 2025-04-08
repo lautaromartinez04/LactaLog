@@ -114,7 +114,7 @@ export const UsuariosScreen = () => {
           <input type="password" id="HSPASS" class="swal2-input mt-0 mb-3">
         </div>
         <select id="ROLUSUARIO" class="swal2-input">
-          <option value="2">Cliente</option>
+          <option value="2">Proveedor</option>
           <option value="3">Administrativo</option>
           <option value="4" selected>Camionero</option>
         </select>
@@ -288,7 +288,7 @@ export const UsuariosScreen = () => {
           <input type="password" id="HSPASS" class="swal2-input" placeholder="Contraseña">
         </div>
         <select id="ROLUSUARIO" class="swal2-input">
-          <option value="2" ${user.ROLUSUARIO === 2 ? 'selected' : ''}>Cliente</option>
+          <option value="2" ${user.ROLUSUARIO === 2 ? 'selected' : ''}>Proveedor</option>
           <option value="3" ${user.ROLUSUARIO === 3 ? 'selected' : ''}>Administrativo</option>
           <option value="4" ${user.ROLUSUARIO === 4 ? 'selected' : ''}>Camionero</option>
         </select>
@@ -481,7 +481,7 @@ export const UsuariosScreen = () => {
                   <td>
                     {user.ROLUSUARIO === 2 ? (
                       <>
-                        Cliente
+                        Proveedor
                         <br />
                         {(clientes.find(c => c.CLIENTEID === user.CLIENTEID) || {}).NOMBRE || ''}
                       </>

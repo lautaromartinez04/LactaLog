@@ -57,8 +57,8 @@ export const NavBar = ({ isAuthenticated, handleLogout }) => {
   }, [navigate]);
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
-      <div className="container">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow w-100">
+      <div className="container w-100">
         <Link className="navbar-brand d-flex align-items-center" to="/">
           <img className="logo-Nav-Bar img-fluid" src={logo} alt="Logo" />
           <img className="logo-Nav-Bar img-fluid" src={icono} alt="Icono" />
@@ -114,9 +114,9 @@ export const NavBar = ({ isAuthenticated, handleLogout }) => {
                       </NavLink>
                     </li>
                     <li className="nav-item">
-                      <NavLink to="/Clientes" onClick={closeNavbar} className="nav-link">
+                      <NavLink to="/Proveedores" onClick={closeNavbar} className="nav-link">
                         <i className="fas fa-users mr-2"></i>
-                        Clientes
+                        Proveedores
                       </NavLink>
                     </li>
                   </>

@@ -12,7 +12,7 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [hasConnection, setHasConnection] = useState(true);
-  const [showPassword, setShowPassword] = useState(false); // Nuevo estado para mostrar/ocultar la contraseña
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   // Verificar conexión con la API
@@ -84,7 +84,8 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
       }
 
       const users = await usersResponse.json();
-      const user = users.find((u) => u.EMAIL === username);
+      // Comparación sin importar mayúsculas/minúsculas
+      const user = users.find((u) => u.EMAIL.toLowerCase() === username.toLowerCase());
 
       if (!user) {
         throw new Error('Usuario no encontrado');
@@ -127,7 +128,6 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
   };
 
   // Si no hay conexión, se muestra un mensaje
-  
   if (!hasConnection) {
     return (
       <div className="container">
@@ -181,14 +181,15 @@ export const LoginScreen = ({ setIsAuthenticated }) => {
                   required
                   className="login-input form-control"
                 />
-                  <i className={showPassword ? "fas fa-eye position-absolute color-eye-danger" : "fas fa-eye-slash position-absolute color-eye"} 
-                  style={{ right:0, padding: '10px', cursor: 'pointer'}}
+                <i 
+                  className={showPassword ? "fas fa-eye position-absolute color-eye-danger" : "fas fa-eye-slash position-absolute color-eye"}
+                  style={{ right: 0, padding: '10px', cursor: 'pointer' }}
                   onClick={(e) => {
                     e.preventDefault();
                     setShowPassword(!showPassword);
-                  }}></i>
+                  }}>
+                </i>
               </div>
-
             </div>
             <div className="d-flex align-items-center mb-3">
               <label htmlFor="rememberMe" className="login-label flex-grow-1">

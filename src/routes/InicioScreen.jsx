@@ -318,7 +318,7 @@ export const InicioScreen = () => {
           <div className="col-12 col-md-4">
             <div className="dashboard-card shadow p-3 mb-3 bg-primary text-white rounded text-center">
               <h2>{totalClientes}</h2>
-              <p>Clientes</p>
+              <p>Proveedores</p>
               <hr style={{ margin: '10px 0', borderColor: 'white' }} />
               <h2>{camionerosCount}</h2>
               <p>Camioneros</p>

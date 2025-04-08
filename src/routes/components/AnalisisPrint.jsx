@@ -110,7 +110,7 @@ const AnalisisPrint = ({ analisis, userName, clientName }) => {
         <h2 className="print-title">DETALLES DEL ANALISIS</h2>
         <div className="print-encabezado">
           <span>Camionero: <strong>{userName || '______________'}</strong></span>
-          <span>Cliente: <strong>{clientName || '______________'}</strong></span>
+          <span>Proveedor: <strong>{clientName || '______________'}</strong></span>
           <span>Fecha y Hora: <strong>{fechaHoraAnalisis}</strong></span>
         </div>
       </div>

@@ -32,14 +32,14 @@ export const App = () => {
     <>
       <div className="App">
         <NavBar handleLogout={handleLogout} isAuthenticated={isAuthenticated} />
-        <div style={{ minHeight: '63.9vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ minHeight: '63.9vh'}} >
           <Routes>
             <Route path="/" element={isAuthenticated ? <InicioScreen /> : <Navigate to="/login" />} />
             <Route path="/Inicio" element={isAuthenticated ? <InicioScreen /> : <Navigate to="/login" />} />
             <Route path="/Usuarios" element={isAuthenticated ? <UsuariosScreen /> : <Navigate to="/login" />} />
             <Route path="/Analisis" element={isAuthenticated ? <AnalisisScreen /> : <Navigate to="/login" />} />
             <Route path="/Transporte" element={isAuthenticated ? <TransporteScreen /> : <Navigate to="/login" />} />
-            <Route path="/Clientes" element={isAuthenticated ? <ClientesScreen /> : <Navigate to="/login" />} />
+            <Route path="/Proveedores" element={isAuthenticated ? <ClientesScreen /> : <Navigate to="/login" />} />
             <Route path='/Reportes' element={isAuthenticated ? <ReportesScreen /> : <Navigate to="/Login" />} />
             <Route
               path="/login"

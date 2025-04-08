@@ -36,7 +36,7 @@ export const ClientesScreen = () => {
           method: 'GET'
         });
         if (!response.ok) {
-          throw new Error('Error al obtener los clientes');
+          throw new Error('Error al obtener los proveedores');
         }
         const result = await response.json();
         setClientes(result);
@@ -57,7 +57,7 @@ export const ClientesScreen = () => {
       .then(clientList => {
         setAllClients(clientList);
       })
-      .catch(err => console.error('Error al obtener clientes', err));
+      .catch(err => console.error('Error al obtener proveedores', err));
   }, []);
 
   // Filtrar clientes según término de búsqueda
@@ -79,30 +79,30 @@ export const ClientesScreen = () => {
         setClientes([...clientes, addedCliente]);
         Swal.fire({
           icon: 'success',
-          title: 'Cliente agregado correctamente',
+          title: 'Proveedor agregado correctamente',
           showConfirmButton: false,
           timer: 1500
         });
       } else {
         Swal.fire({
           icon: 'error',
-          title: 'Error al agregar el cliente',
+          title: 'Error al agregar el proveedor',
           showConfirmButton: false,
           timer: 1500
         });
-        throw new Error('Error al agregar el cliente');
+        throw new Error('Error al agregar el proveedor');
       }
     } catch (err) {
-      console.error('Error al agregar cliente:', err);
+      console.error('Error al agregar el proveedor:', err);
     }
   };
 
   // Abre SweetAlert para solicitar el nombre del nuevo cliente
   const handleAddClienteButtonClick = () => {
     Swal.fire({
-      title: 'Nuevo Cliente',
+      title: 'Nuevo Proveedor',
       input: 'text',
-      inputPlaceholder: 'Ingresa el nombre del cliente',
+      inputPlaceholder: 'Ingresa el nombre del proveedor',
       showCancelButton: true,
       confirmButtonText: 'Agregar',
       cancelButtonText: 'Cancelar',
@@ -146,18 +146,18 @@ export const ClientesScreen = () => {
             setClientes(clientes.filter(cliente => cliente.CLIENTEID !== clienteID));
             Swal.fire({
               icon: 'success',
-              title: 'Cliente eliminado correctamente',
+              title: 'Proveedor eliminado correctamente',
               showConfirmButton: false,
               timer: 1500
             });
           } else {
-            throw new Error('Error al eliminar el cliente');
+            throw new Error('Error al eliminar el proveedor');
           }
         } catch (err) {
-          console.error('Error al eliminar cliente:', err);
+          console.error('Error al eliminar el proveedor:', err);
           Swal.fire({
             icon: 'error',
-            title: 'Error al eliminar el cliente',
+            title: 'Error al eliminar el proveedor',
             showConfirmButton: false,
             timer: 1500
           });
@@ -170,7 +170,7 @@ export const ClientesScreen = () => {
   const handleEditCliente = (clienteID) => {
     const cliente = clientes.find(c => c.CLIENTEID === clienteID);
     Swal.fire({
-      title: 'Editar Cliente',
+      title: 'Editar Proveedor',
       input: 'text',
       inputValue: cliente.NOMBRE,
       showCancelButton: true,
@@ -200,20 +200,20 @@ export const ClientesScreen = () => {
             ));
             Swal.fire({
               icon: 'success',
-              title: 'Cliente actualizado correctamente',
+              title: 'Proveedor actualizado correctamente',
               showConfirmButton: false,
               timer: 1500
             });
           } else {
             Swal.fire({
               icon: 'error',
-              title: 'Error al actualizar el cliente',
+              title: 'Error al actualizar el proveedor',
               showConfirmButton: false,
               timer: 1500
             })
           }
         } catch (err) {
-          console.error('Error al actualizar cliente:', err);
+          console.error('Error al actualizar el proveedor:', err);
         }
       }
     });
@@ -231,20 +231,20 @@ export const ClientesScreen = () => {
 
   if (error) {
     return <div className="container text-center mt-5 p-5 bg-light bold">
-      <h1>Error al cargar los clientes</h1>
+      <h1>Error al cargar los proveedores</h1>
       <p>{error}</p>
     </div>;
   }
 
   return (
     <div className="container mt-2 mb-2 text-center p-5 bg-light rounded shadow">
-      <h1 className="mb-4 text-center">Clientes</h1>
+      <h1 className="mb-4 text-center">Proveedores</h1>
       {/* Campo de búsqueda y botón para agregar, en vista móvil y escritorio */}
       <div className="mb-4 d-flex align-items-center">
         <input
           type="text"
           className="form-control"
-          placeholder="Buscar cliente..."
+          placeholder="Buscar proveedor..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -278,14 +278,14 @@ export const ClientesScreen = () => {
                     </button>
                     <button
                       className="btn btn-outline-info btn-sm mr-2"
-                      title="Editar cliente"
+                      title="Editar proveedor"
                       onClick={() => handleEditCliente(cliente.CLIENTEID)}
                     >
                       <i className="fas fa-pencil-alt"></i>
                     </button>
                     <button
                       className="btn btn-outline-danger btn-sm"
-                      title="Eliminar cliente"
+                      title="Eliminar proveedor"
                       onClick={() => handleDeleteCliente(cliente.CLIENTEID)}
                     >
                       <i className="fas fa-trash"></i>
@@ -296,7 +296,7 @@ export const ClientesScreen = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="2" className="text-center">No hay clientes disponibles</td>
+                <td colSpan="2" className="text-center">No hay proveedores disponibles</td>
               </tr>
             )}
           </tbody>

@@ -787,7 +787,7 @@ export const TransporteScreen = () => {
   });
 
   return (
-    <div className="text-center m-2 p-1 rounded shadow transporte-container border">
+    <div className="text-center m-2 p-2 rounded shadow transporte-container border">
       <h1 className="mb-4">Transporte</h1>
       {/* Grupo de botones para filtrar */}
       <div className="btn-group mb-3 d-none d-md-block">
@@ -891,7 +891,7 @@ export const TransporteScreen = () => {
         <table className="table table-striped table-bordered transporte-table">
           <thead>
             <tr>
-              <th>Cliente</th>
+              <th>Proveedor</th>
               <th>Fecha Transporte</th>
               <th>Camionero</th>
               <th>Modificacion</th>

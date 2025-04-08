@@ -431,7 +431,7 @@ export const AnalisisScreen = () => {
           <thead>
             <tr>
               <th>Camionero</th>
-              <th>Cliente</th>
+              <th>Proveedor</th>
               <th>Fecha de Análisis</th>
               <th>Estado</th>
               <th>Anomalía</th>

@@ -957,8 +957,8 @@ export const TransporteScreen = () => {
                           </div>
                         ) : (
                           <>
-                            <div className='d-flex justify-center align-items-center'>
-                              <span className='text-warning' style={{ fontWeight: "bold" }}>En espera</span>
+                            <div className='d-flex justify-content-center align-items-center'>
+                              <span className='text-warning text-center' style={{ fontWeight: "bold" }}>En espera</span>
                               <i
                                 className="fas fa-info-circle"
                                 onClick={() => handleShowAnomaliaDescripcion(transporte)}

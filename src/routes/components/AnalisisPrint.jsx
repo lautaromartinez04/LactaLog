@@ -177,7 +177,7 @@ const AnalisisPrint = ({ analisis, userName, clientName }) => {
       </div>
       
       {/* Pie de página: Firmas */}
-      <div className="print-footer mt-4">
+      <div className="print-footer">
         <div className="firma-col">
           <p className='mb-5'>Firma</p>
           <p>_____________________</p>

@@ -48,3 +48,34 @@ button:hover {
   cursor: pointer;
   transform: scale(1.05);
 }
+
+/* 1. Base para los links de paginación */
+.pagination .page-link {
+  background-color: #ffffff;
+  color: #eaa416;
+  font-weight: bolder;
+  border: 2px solid #eaa416;
+  outline: none;
+  transition: all 0.05s ease-in-out !important;
+}
+
+/* 2. Hover */
+.pagination .page-link:hover {
+  background-color: #eaa416;
+  color: #ffffff;
+  font-weight: bolder;
+  border: 2px solid #eaa416;
+}
+
+/* 3. Focus, Active y estado “.active” dentro de .page-item */
+.pagination .page-link:focus,
+.pagination .page-link:active,
+.pagination .page-link.focus,
+.pagination .page-item.active .page-link {
+  outline: none !important;
+  box-shadow: 0 0 0 4px #eaa31663 !important;
+  background-color: #eaa416;
+  color: #ffffff;
+  font-weight: bolder;
+  border: 2px solid #eaa416;
+}

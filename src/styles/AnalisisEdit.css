@@ -22,6 +22,10 @@
   outline: none;
 }
 
+.EAA416{
+  color: #eaa416 !important;
+}
+
 /* Estilo cuando el checkbox está marcado */
 .custom-checkbox:checked {
   background-color: #007bff;

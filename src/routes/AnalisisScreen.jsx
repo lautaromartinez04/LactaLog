@@ -18,9 +18,9 @@ export const AnalisisScreen = () => {
   const [selectedAnalisis, setSelectedAnalisis] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [lastViewedAnalisisId, setLastViewedAnalisisId] = useState(null);
-  // Estado para el filtro seleccionado:
-  // Valores posibles: "" (todos), "open", "closed", "anomalous", "anomalousNotVerified"
-  const [filterType, setFilterType] = useState("");
+  const [filterType, setFilterType] = useState(""); // "" (todos), "open", "closed", "anomalous", "anomalousNotVerified"
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const token = getToken();
   const location = useLocation();
@@ -94,6 +94,11 @@ export const AnalisisScreen = () => {
     fetchAllData();
   }, [token]);
 
+  // Resetear página cuando cambian búsqueda o filtro
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterType]);
+
   // Filtrado de análisis según búsqueda, ID, filtro seleccionado y (si rol 2) CLIENTEID asociado
   const filteredAnalisis = analisisList.filter(analisis => {
     const user = users[analisis.USUARIOID_ANALISIS] || analisis.USUARIOID_ANALISIS;
@@ -110,7 +115,7 @@ export const AnalisisScreen = () => {
       client.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Filtro por estado (abierto, cerrado, etc.)
+    // Filtro por estado
     let matchesFilter = true;
     switch (filterType) {
       case "open":
@@ -129,7 +134,7 @@ export const AnalisisScreen = () => {
         matchesFilter = true;
     }
 
-    // Si el usuario es cliente, se filtran solo los análisis relacionados a su CLIENTEID
+    // Si el usuario es cliente, filtrar solo los análisis relacionados a su CLIENTEID
     if (userRole === 2) {
       const transporte = transportes.find(t => t.TRANSPORTEID === analisis.TRANSPORTEID);
       if (!transporte || Number(transporte.CLIENTEID) !== clienteId) {
@@ -139,6 +144,12 @@ export const AnalisisScreen = () => {
 
     return matchesGeneral && matchesFilter;
   });
+
+  // Cálculo de paginación
+  const indexOfLastAnalisis = currentPage * itemsPerPage;
+  const indexOfFirstAnalisis = indexOfLastAnalisis - itemsPerPage;
+  const currentAnalisis = filteredAnalisis.slice(indexOfFirstAnalisis, indexOfLastAnalisis);
+  const totalPages = Math.ceil(filteredAnalisis.length / itemsPerPage);
 
   const getClientNameFromAnalisis = (analisis) => {
     const transporte = transportes.find(t => t.TRANSPORTEID === analisis.TRANSPORTEID);
@@ -171,13 +182,11 @@ export const AnalisisScreen = () => {
       if (!response.ok) {
         throw new Error("Error al actualizar el análisis");
       }
-      // Actualiza la lista de análisis
       setAnalisisList(prev =>
         prev.map(item =>
           item.ANALISISID === analysisID ? { ...item, ...payload } : item
         )
       );
-      // Actualiza el análisis seleccionado sin salir de la vista de detalles
       if (selectedAnalisis && selectedAnalisis.ANALISISID === analysisID) {
         setSelectedAnalisis({ ...selectedAnalisis, ...payload });
       }
@@ -346,7 +355,6 @@ export const AnalisisScreen = () => {
       <h1 className="mb-4">Análisis</h1>
 
       {/* Grupo de botones para filtrar */}
-      {/* Filtros en escritorio (horizontal) */}
       <div className="btn-group mb-3 d-none d-md-inline-flex">
         <button
           className={`btn btn-LL-A ${filterType === "" ? "active" : ""}`}
@@ -380,7 +388,7 @@ export const AnalisisScreen = () => {
         </button>
       </div>
 
-      {/* Filtros en móvil (vertical) */}
+      {/* Filtros en móvil */}
       <div className="d-block d-md-none">
         <button
           className={`btn btn-LL-A w-100 mb-2 ${filterType === "" ? "active" : ""}`}
@@ -441,7 +449,7 @@ export const AnalisisScreen = () => {
           </thead>
           <tbody>
             {filteredAnalisis.length > 0 ? (
-              filteredAnalisis.map((analisis) => (
+              currentAnalisis.map((analisis) => (
                 <tr
                   key={analisis.ANALISISID}
                   className={lastViewedAnalisisId === analisis.ANALISISID ? "fila selected-row" : "fila"}
@@ -486,10 +494,12 @@ export const AnalisisScreen = () => {
                               </button>
                               <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(analisis)} style={{ marginLeft: "5px", color: "rgb(255, 193, 7)", cursor: "pointer" }}></i>
                             </>
-                          ) : (<>
-                            <span className='text-warning' style={{ fontWeight: "bold" }}>En espera</span>
-                            <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(analisis)} style={{ marginLeft: "5px", color: "rgb(255, 193, 7)", cursor: "pointer" }}></i>
-                          </>)}
+                          ) : (
+                            <>
+                              <span className='text-warning' style={{ fontWeight: "bold" }}>En espera</span>
+                              <i className="fas fa-info-circle" onClick={() => handleShowAnomaliaDescripcion(analisis)} style={{ marginLeft: "5px", color: "rgb(255, 193, 7)", cursor: "pointer" }}></i>
+                            </>
+                          )}
                         </>
                       )
                     ) : (
@@ -497,23 +507,13 @@ export const AnalisisScreen = () => {
                     )}
                   </td>
                   <td>
-                    {userRole === 2 ? (
-                      <button
-                        className="btn btn-outline-primary btn-sm"
-                        onClick={() => handleViewClick(analisis)}
-                        title='Ver Analisis'
-                      >
-                        <i className="fas fa-eye"></i>
-                      </button>
-                    ) : (
-                      <button
-                        className="btn btn-outline-primary btn-sm"
-                        onClick={() => handleViewClick(analisis)}
-                        title='Ver Analisis'
-                      >
-                        <i className="fas fa-eye"></i>
-                      </button>
-                    )}
+                    <button
+                      className="btn btn-outline-primary btn-sm"
+                      onClick={() => handleViewClick(analisis)}
+                      title='Ver Analisis'
+                    >
+                      <i className="fas fa-eye"></i>
+                    </button>
                   </td>
                 </tr>
               ))
@@ -525,6 +525,25 @@ export const AnalisisScreen = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Controles de paginación */}
+      {totalPages > 1 && (
+        <nav>
+          <ul className="pagination justify-content-center">
+            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+              <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Anterior</button>
+            </li>
+            {[...Array(totalPages)].map((_, index) => (
+              <li key={index + 1} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+              </li>
+            ))}
+            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+              <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Siguiente</button>
+            </li>
+          </ul>
+        </nav>
+      )}
     </div>
   );
 };

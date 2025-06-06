@@ -380,13 +380,15 @@ export const AnalisisEdit = ({
           <div className="container mt-5">
             <div className="row">
               <div className="col-12 col-md-4">
-                <p><strong>Camionero:</strong> {userName}</p>
+
+                <p><i className="fas fa-truck mr-2 EAA416"></i><strong>Camionero:</strong> {userName}</p>
               </div>
               <div className="col-12 col-md-4">
-                <p><strong>Proveedor:</strong> {clientName}</p>
+                <p> <i className="fas fa-building mr-2 EAA416"></i><strong>Proveedor:</strong> {clientName}</p>
               </div>
               <div className="col-12 col-md-4">
                 <p>
+                  <i className="fas fa-calendar-alt mr-2 EAA416"></i>
                   <strong>Fecha y Hora del Análisis:</strong>{' '}
                   {new Date(currentAnalisis.FECHAHORAANALISIS).toLocaleString()}
                 </p>
@@ -401,6 +403,7 @@ export const AnalisisEdit = ({
                 <div className="row mt-4">
                   <div className="col-12 col-md-6">
                     <p>
+                      <i className="fas fa-tint mr-2 EAA416"></i>
                       <strong>Litros de Leche: </strong>
                       <span className="dotted-line"></span>
                       {transporteData.LITROS}
@@ -409,6 +412,7 @@ export const AnalisisEdit = ({
                   </div>
                   <div className="col-12 col-md-6">
                     <p>
+                      <i className="fas fa-temperature-high mr-2 EAA416"></i>
                       <strong>Temperatura: </strong>
                       <span className="dotted-line"></span>
                       {transporteData.TEMPERATURA}
@@ -419,6 +423,7 @@ export const AnalisisEdit = ({
                 <div className="row">
                   <div className="col-12 col-md-6">
                     <p>
+                      <i className="fas fa-microscope mr-2 EAA416"></i>
                       <strong>Prueba de Alcohol: </strong>
                       <span className="dotted-line"></span>
                       {transporteData.PALCOHOL ? 'Positiva' : 'Negativa'}
@@ -426,6 +431,7 @@ export const AnalisisEdit = ({
                   </div>
                   <div className="col-12 col-md-6">
                     <p>
+                      <i className="fas fa-calendar-alt mr-2 EAA416"></i>
                       <strong>Fecha del Transporte: </strong>
                       <span className="dotted-line"></span>
                       {new Date(
@@ -460,24 +466,33 @@ export const AnalisisEdit = ({
             ))}
           </div>
           <hr />
-          <div className="container">
-            <div className="row">
+          <div className="container text-center">
+            <div className="row justify-content-center mb-2">
               <div className="col-12 col-md-6">
-                <p><strong>Usuario Modificación: </strong> {modUserName}</p>
+                <p>
+                  <i className="fas fa-user mr-2 EAA416"></i>
+                  <strong>Usuario Modificación: </strong>{modUserName}
+                </p>
               </div>
               <div className="col-12 col-md-6">
-                <p><strong>Versión:</strong> {currentAnalisis.VERSION}</p>
+                <p>
+                  <i className="fas fa-tag mr-2 EAA416"></i>
+                  <strong>Versión: </strong>{currentAnalisis.VERSION}
+                </p>
               </div>
             </div>
-            <div className="row">
+
+            <div className="row justify-content-center mb-4">
               <div className="col-12">
                 <p>
-                  <strong>Fecha y Hora modificación:</strong>{' '}
+                  <i className="fas fa-calendar-alt mr-2 EAA416"></i>
+                  <strong>Fecha y Hora modificación: </strong>
                   {new Date(currentAnalisis.FECHAHORAMODIFICACION).toLocaleString()}
                 </p>
               </div>
             </div>
           </div>
+
           {/* Grupo de botones inferior (sin el botón "Volver") */}
           <div className="d-flex flex-column flex-md-row justify-content-between w-100 mt-4">
             <button className="btn btn-outline-secondary mb-2 mb-md-0" onClick={handlePrint}>

@@ -23,12 +23,14 @@ export const renewToken = async () => {
       body: JSON.stringify({ user, password })
     });
     const result = await response.json();
-    if (response.ok && result.token) {
-      localStorage.setItem('token', result.token);
-      return result.token;
+    const newToken = result.access_token || result.token;
+    if (response.ok && newToken) {
+      localStorage.setItem('token', newToken);
+      return newToken;
     } else {
       throw new Error('No se pudo renovar el token');
     }
+
   } catch (err) {
     console.error('Error al renovar el token:', err);
     window.location.href = '/login';
@@ -39,7 +41,7 @@ export const renewToken = async () => {
 // Realiza un fetch usando el token, renovándolo si es necesario.
 export const fetchWithToken = async (url, options = {}) => {
   let token = getToken();
-  
+
   // Si el método es DELETE, no incluimos 'Content-Type'
   if (options.method && options.method.toUpperCase() === 'DELETE') {
     options.headers = {

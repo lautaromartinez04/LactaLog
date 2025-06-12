@@ -31,6 +31,10 @@ export const TransporteScreen = () => {
   const userRole = Number(localStorage.getItem('rol'));
   const clienteId = userRole === 2 ? Number(localStorage.getItem('clienteId')) : null;
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+
   // Remover token al salir de la página
   useEffect(() => {
     removeTokenOnUnload();
@@ -742,8 +746,12 @@ export const TransporteScreen = () => {
     );
   }
 
+
+
   // Filtrar transportes según búsqueda, ID, filtro y CLIENTEID si el usuario es cliente
   const filteredData = data.filter(item => {
+
+
     const client = allClients.find(c => c.CLIENTEID === item.CLIENTEID);
     const clientNameText = client ? client.NOMBRE : '';
     const modUserName = users[item.USUARIOID_MODIFICACION] || '';
@@ -786,6 +794,12 @@ export const TransporteScreen = () => {
     return matchesGeneral && matchesFilter;
   });
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+
   return (
     <div className="text-center m-2 p-2 rounded shadow transporte-container border">
       <h1 className="mb-4">Transporte</h1>
@@ -793,37 +807,37 @@ export const TransporteScreen = () => {
       <div className="btn-group mb-3 d-none d-md-block">
         <button
           className={`btn btn-LL-A ${filterType === "" ? "active" : ""}`}
-          onClick={() => setFilterType("")}
+          onClick={() => { setFilterType(""); setCurrentPage(1); }}
         >
           Todos
         </button>
         <button
           className={`btn btn-LL-A ${filterType === "open" ? "active" : ""}`}
-          onClick={() => setFilterType("open")}
+          onClick={() => { setFilterType("open"); setCurrentPage(1); }}
         >
           Abiertos
         </button>
         <button
           className={`btn btn-LL-A ${filterType === "closed" ? "active" : ""}`}
-          onClick={() => setFilterType("closed")}
+          onClick={() => { setFilterType("closed"); setCurrentPage(1); }}
         >
           Cerrados
         </button>
         <button
           className={`btn btn-LL-A ${filterType === "anomalous" ? "active" : ""}`}
-          onClick={() => setFilterType("anomalous")}
+          onClick={() => { setFilterType("anomalous"); setCurrentPage(1); }}
         >
           Anómalos
         </button>
         <button
           className={`btn btn-LL-A ${filterType === "anomalousNotVerified" ? "active" : ""}`}
-          onClick={() => setFilterType("anomalousNotVerified")}
+          onClick={() => { setFilterType("anomalousNotVerified"); setCurrentPage(1); }}
         >
           No verificados
         </button>
         <button
           className={`btn btn-LL-A ${filterType === "decomiso" ? "active" : ""}`}
-          onClick={() => setFilterType("decomisado")}
+          onClick={() => { setFilterType("decomisado"); setCurrentPage(1); }}
         >
           Decomisados
         </button>
@@ -877,7 +891,10 @@ export const TransporteScreen = () => {
           className="form-control transporte-search me-2"
           placeholder="Buscar por cliente, fecha, usuario o litros"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
         />
         {userRole !== 2 && (
           <button className="btn btn-outline-success transporte-add-btn ml-2" onClick={handleAddTransporteButtonClick}>
@@ -904,14 +921,14 @@ export const TransporteScreen = () => {
           </thead>
           <tbody className="">
             {filteredData.length > 0 ? (
-              filteredData.map((transporte) => (
+              currentItems.map((transporte) => (
                 <tr key={transporte.TRANSPORTEID}>
                   <td>
                     {allClients.find(c => c.CLIENTEID === transporte.CLIENTEID)?.NOMBRE || transporte.CLIENTEID}
                   </td>
                   <td>{new Date(transporte.FECHAHORATRANSPORTE).toLocaleString()}</td>
                   <td>{users[transporte.USUARIOID_TRANSPORTE] || transporte.USUARIOID_TRANSPORTE}</td>
-                  <td>{new Date(transporte.FECHAHORAMODIFICACION).toLocaleString()} <br/><span style={{ fontStyle: 'italic', color: 'gray' }}>por</span> {users[transporte.USUARIOID_MODIFICACION] || transporte.USUARIOID_MODIFICACION}</td>
+                  <td>{new Date(transporte.FECHAHORAMODIFICACION).toLocaleString()} <br /><span style={{ fontStyle: 'italic', color: 'gray' }}>por</span> {users[transporte.USUARIOID_MODIFICACION] || transporte.USUARIOID_MODIFICACION}</td>
                   <td>{transporte.LITROS}<span style={{ fontStyle: 'italic', fontSize: '0.8em', color: 'gray' }}>Lt</span></td>
                   <td>
                     {transporte.CERRADO ? (
@@ -973,9 +990,9 @@ export const TransporteScreen = () => {
                       <span style={{ color: 'green', fontWeight: 'bold' }}>Sin anomalías</span>
                     )}
                     {transporte.DECOMISO ? (
-                      <div style={{ display: "flex", alignItems: "center", cursor: "pointer", justifyContent:"center" }}
+                      <div style={{ display: "flex", alignItems: "center", cursor: "pointer", justifyContent: "center" }}
                         onClick={() => Swal.fire({ title: 'Motivo del decomiso', text: "• " + transporte.DECOMISO_OBSERVACION, icon: 'info', confirmButtonText: 'Aceptar', customClass: { confirmButton: 'btn btn-guardar' } })}>
-                        <span className='text-center' style={{ color: 'red', fontWeight: 'bold'}}>Decomisado</span>
+                        <span className='text-center' style={{ color: 'red', fontWeight: 'bold' }}>Decomisado</span>
                         <i className="fas fa-info-circle" style={{ marginLeft: "5px", color: "#FFC107" }}></i>
                       </div>
                     ) : (
@@ -1069,6 +1086,25 @@ export const TransporteScreen = () => {
             )}
           </tbody>
         </table>
+
+        <div className="d-flex justify-content-center align-items-center mt-3">
+          <nav>
+            <ul className="pagination">
+              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => setCurrentPage(prev => prev - 1)}>Anterior</button>
+              </li>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                  <button className="page-link" onClick={() => setCurrentPage(i + 1)}>{i + 1}</button>
+                </li>
+              ))}
+              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => setCurrentPage(prev => prev + 1)}>Siguiente</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
       </div>
     </div>
   );

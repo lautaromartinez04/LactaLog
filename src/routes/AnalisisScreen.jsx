@@ -535,7 +535,7 @@ export const AnalisisScreen = () => {
             </li>
             {[...Array(totalPages)].map((_, index) => (
               <li key={index + 1} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+                <button className="page-link btn-LL-A" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
               </li>
             ))}
             <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>

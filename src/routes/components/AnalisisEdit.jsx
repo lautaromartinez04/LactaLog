@@ -130,37 +130,83 @@ export const AnalisisEdit = ({
     }
   }, [currentAnalisis.TRANSPORTEID]);
 
+  useEffect(() => {
+    if (transporteData) {
+      const litros = Number(transporteData.LITROS) || 0;
+      setFormData(prev => ({
+        ...prev,
+        MG_KG: (litros * prev.MG_PORCENTUAL) / 100,
+        PROT_KG: (litros * prev.PROT_PORCENTUAL) / 100,
+        LACT_KG: (litros * prev.LACT_PORCENTUAL) / 100,
+        SNG_KG: (litros * prev.SNG_PORCENTUAL) / 100,
+        ST_KG: (litros * prev.ST_PORCENTUAL) / 100,
+      }));
+    }
+  }, [transporteData]);
+
   // Maneja los cambios de los inputs
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value: rawValue } = e.target;
+
+    // ↳ 1.1) Limitar la parte decimal a 0–2 dígitos
+    const regex = /^(\d*)([.,]\d{0,2})?/;
+    const match = rawValue.match(regex);
+    const raw = match ? match[0] : '';
+
+    // ↳ 1.2) Normalizar coma → punto y parsear
+    const normalized = raw.replace(',', '.');
+    const num = parseFloat(normalized) || 0;
+
+    // ↳ 1.3) Preparo el update: siempre actualizo el campo crudo
+    const update = { [name]: raw };
+
+    // ↳ 1.4) Si cambiaron los %… recalculo y **redondeo a 2 decimales** el KG
+    if (name.endsWith('_PORCENTUAL') && transporteData) {
+      const litros = Number(transporteData.LITROS) || 0;
+      const base = name.split('_')[0]; // "MG", "PROT", …
+      const kilosRaw = (litros * num) / 100;
+      update[`${base}_KG`] = parseFloat(kilosRaw.toFixed(2));
+    }
+
+    setFormData(prev => ({ ...prev, ...update }));
   };
 
   // Al enviar el formulario se guarda la edición y se vuelve a la vista de detalles
+  // 2) Y en handleSubmit, parsea y redondea también a 2 decimales antes de enviar:
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const parseAndRound = (field) => {
+      // convierto a string, normalizo coma → punto, parseo y fijo 2 decimales
+      const str = String(formData[field]).replace(',', '.');
+      const n = parseFloat(str) || 0;
+      return parseFloat(n.toFixed(2));
+    };
+
     const payload = {
-      MG_PORCENTUAL: Number(formData.MG_PORCENTUAL),
-      MG_KG: Number(formData.MG_KG),
-      PROT_PORCENTUAL: Number(formData.PROT_PORCENTUAL),
-      PROT_KG: Number(formData.PROT_KG),
-      LACT_PORCENTUAL: Number(formData.LACT_PORCENTUAL),
-      LACT_KG: Number(formData.LACT_KG),
-      SNG_PORCENTUAL: Number(formData.SNG_PORCENTUAL),
-      SNG_KG: Number(formData.SNG_KG),
-      ST_PORCENTUAL: Number(formData.ST_PORCENTUAL),
-      ST_KG: Number(formData.ST_KG),
-      UREA: Number(formData.UREA),
-      UFC: Number(formData.UFC),
-      CS: Number(formData.CS),
+      MG_PORCENTUAL: parseAndRound('MG_PORCENTUAL'),
+      MG_KG: parseAndRound('MG_KG'),
+      PROT_PORCENTUAL: parseAndRound('PROT_PORCENTUAL'),
+      PROT_KG: parseAndRound('PROT_KG'),
+      LACT_PORCENTUAL: parseAndRound('LACT_PORCENTUAL'),
+      LACT_KG: parseAndRound('LACT_KG'),
+      SNG_PORCENTUAL: parseAndRound('SNG_PORCENTUAL'),
+      SNG_KG: parseAndRound('SNG_KG'),
+      ST_PORCENTUAL: parseAndRound('ST_PORCENTUAL'),
+      ST_KG: parseAndRound('ST_KG'),
+      UREA: parseAndRound('UREA'),
+      UFC: parseAndRound('UFC'),
+      CS: parseAndRound('CS'),
       AGUA: formData.AGUA,
       ANTIBIOTICO: formData.ANTIBIOTICO,
       VERSION: currentAnalisis.VERSION + 1
     };
+
     onSave(currentAnalisis.ANALISISID, payload);
     setCurrentAnalisis(prev => ({ ...prev, ...payload }));
     setIsEditing(false);
   };
+
 
   // Acción para imprimir
   const handlePrint = () => {
@@ -329,16 +375,16 @@ export const AnalisisEdit = ({
 
   // Reglas de validación para resaltar inputs fuera de rango
   const validationRules = {
-    MG_PORCENTUAL: { min: 3.3, max: 4.0, unit: '%' },
-    MG_KG: { min: 33, max: 40, unit: 'grs' },
+    MG_PORCENTUAL: { min: 3.3, max: 5.5, unit: '%' },
+    //MG_KG: { min: 33, max: 40, unit: 'grs' },
     PROT_PORCENTUAL: { min: 3.3, max: 3.5, unit: '%' },
-    PROT_KG: { min: 33, max: 35, unit: 'grs' },
+    //PROT_KG: { min: 33, max: 35, unit: 'grs' },
     LACT_PORCENTUAL: { min: 4.8, max: 5.2, unit: '%' },
-    LACT_KG: { min: 48, max: 52, unit: 'grs' },
+    //LACT_KG: { min: 48, max: 52, unit: 'grs' },
     SNG_PORCENTUAL: { min: 8.6, max: 9.5, unit: '%' },
-    SNG_KG: { min: 86, max: 95, unit: 'grs' },
+    //SNG_KG: { min: 86, max: 95, unit: 'grs' },
     ST_PORCENTUAL: { min: 11.9, max: 13.5, unit: '%' },
-    ST_KG: { min: 119, max: 135, unit: 'grs' },
+    //ST_KG: { min: 119, max: 135, unit: 'grs' },
     UREA: { min: 10, max: 16, unit: 'mg/L' },
     UFC: { min: 50000, max: 250000, unit: 'mg/L' },
     CS: { min: 200, max: 400, unit: 'mg/L' },
@@ -380,15 +426,13 @@ export const AnalisisEdit = ({
           <div className="container mt-5">
             <div className="row">
               <div className="col-12 col-md-4">
-
-                <p><i className="fas fa-truck mr-2 EAA416"></i><strong>Camionero:</strong> {userName}</p>
+                <p><strong>Camionero:</strong> {userName}</p>
               </div>
               <div className="col-12 col-md-4">
-                <p> <i className="fas fa-building mr-2 EAA416"></i><strong>Proveedor:</strong> {clientName}</p>
+                <p><strong>Cliente:</strong> {clientName}</p>
               </div>
               <div className="col-12 col-md-4">
                 <p>
-                  <i className="fas fa-calendar-alt mr-2 EAA416"></i>
                   <strong>Fecha y Hora del Análisis:</strong>{' '}
                   {new Date(currentAnalisis.FECHAHORAANALISIS).toLocaleString()}
                 </p>
@@ -403,7 +447,6 @@ export const AnalisisEdit = ({
                 <div className="row mt-4">
                   <div className="col-12 col-md-6">
                     <p>
-                      <i className="fas fa-tint mr-2 EAA416"></i>
                       <strong>Litros de Leche: </strong>
                       <span className="dotted-line"></span>
                       {transporteData.LITROS}
@@ -412,7 +455,6 @@ export const AnalisisEdit = ({
                   </div>
                   <div className="col-12 col-md-6">
                     <p>
-                      <i className="fas fa-temperature-high mr-2 EAA416"></i>
                       <strong>Temperatura: </strong>
                       <span className="dotted-line"></span>
                       {transporteData.TEMPERATURA}
@@ -423,7 +465,6 @@ export const AnalisisEdit = ({
                 <div className="row">
                   <div className="col-12 col-md-6">
                     <p>
-                      <i className="fas fa-microscope mr-2 EAA416"></i>
                       <strong>Prueba de Alcohol: </strong>
                       <span className="dotted-line"></span>
                       {transporteData.PALCOHOL ? 'Positiva' : 'Negativa'}
@@ -431,7 +472,6 @@ export const AnalisisEdit = ({
                   </div>
                   <div className="col-12 col-md-6">
                     <p>
-                      <i className="fas fa-calendar-alt mr-2 EAA416"></i>
                       <strong>Fecha del Transporte: </strong>
                       <span className="dotted-line"></span>
                       {new Date(
@@ -466,33 +506,24 @@ export const AnalisisEdit = ({
             ))}
           </div>
           <hr />
-          <div className="container text-center">
-            <div className="row justify-content-center mb-2">
+          <div className="container">
+            <div className="row">
               <div className="col-12 col-md-6">
-                <p>
-                  <i className="fas fa-user mr-2 EAA416"></i>
-                  <strong>Usuario Modificación: </strong>{modUserName}
-                </p>
+                <p><strong>Usuario Modificación: </strong> {modUserName}</p>
               </div>
               <div className="col-12 col-md-6">
-                <p>
-                  <i className="fas fa-tag mr-2 EAA416"></i>
-                  <strong>Versión: </strong>{currentAnalisis.VERSION}
-                </p>
+                <p><strong>Versión:</strong> {currentAnalisis.VERSION}</p>
               </div>
             </div>
-
-            <div className="row justify-content-center mb-4">
+            <div className="row">
               <div className="col-12">
                 <p>
-                  <i className="fas fa-calendar-alt mr-2 EAA416"></i>
-                  <strong>Fecha y Hora modificación: </strong>
+                  <strong>Fecha y Hora modificación:</strong>{' '}
                   {new Date(currentAnalisis.FECHAHORAMODIFICACION).toLocaleString()}
                 </p>
               </div>
             </div>
           </div>
-
           {/* Grupo de botones inferior (sin el botón "Volver") */}
           <div className="d-flex flex-column flex-md-row justify-content-between w-100 mt-4">
             <button className="btn btn-outline-secondary mb-2 mb-md-0" onClick={handlePrint}>
@@ -575,7 +606,8 @@ export const AnalisisEdit = ({
               <div className="col-12 col-md-4 form-group">
                 <label>Porcentaje de Materia Grasa (%)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('MG_PORCENTUAL')}`}
                   name="MG_PORCENTUAL"
                   value={formData.MG_PORCENTUAL}
@@ -586,18 +618,20 @@ export const AnalisisEdit = ({
               <div className="col-12 col-md-4 form-group">
                 <label>Gramos de Materia Grasa por litro (g/L)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('MG_KG')}`}
                   name="MG_KG"
                   value={formData.MG_KG}
-                  onChange={handleChange}
+                  readOnly
                 />
                 <small className="reference-text">{getReferenceText('MG_KG')}</small>
               </div>
               <div className="col-12 col-md-4 form-group">
                 <label>Porcentaje de Proteína (%)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('PROT_PORCENTUAL')}`}
                   name="PROT_PORCENTUAL"
                   value={formData.PROT_PORCENTUAL}
@@ -610,18 +644,20 @@ export const AnalisisEdit = ({
               <div className="col-12 col-md-4 form-group">
                 <label>Gramos de Proteína por litro (g/L)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('PROT_KG')}`}
                   name="PROT_KG"
                   value={formData.PROT_KG}
-                  onChange={handleChange}
+                  readOnly
                 />
                 <small className="reference-text">{getReferenceText('PROT_KG')}</small>
               </div>
               <div className="col-12 col-md-4 form-group">
                 <label>Porcentaje de Lactosa (%)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('LACT_PORCENTUAL')}`}
                   name="LACT_PORCENTUAL"
                   value={formData.LACT_PORCENTUAL}
@@ -632,11 +668,12 @@ export const AnalisisEdit = ({
               <div className="col-12 col-md-4 form-group">
                 <label>Gramos de Lactosa por litro (g/L)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('LACT_KG')}`}
                   name="LACT_KG"
                   value={formData.LACT_KG}
-                  onChange={handleChange}
+                  readOnly
                 />
                 <small className="reference-text">{getReferenceText('LACT_KG')}</small>
               </div>
@@ -645,7 +682,8 @@ export const AnalisisEdit = ({
               <div className="col-12 col-md-4 form-group">
                 <label>Porcentaje de Sólidos No Grasos (%)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('SNG_PORCENTUAL')}`}
                   name="SNG_PORCENTUAL"
                   value={formData.SNG_PORCENTUAL}
@@ -656,18 +694,20 @@ export const AnalisisEdit = ({
               <div className="col-12 col-md-4 form-group">
                 <label>Gramos de Sólidos No Grasos por litro (g/L)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('SNG_KG')}`}
                   name="SNG_KG"
                   value={formData.SNG_KG}
-                  onChange={handleChange}
+                  readOnly
                 />
                 <small className="reference-text">{getReferenceText('SNG_KG')}</small>
               </div>
               <div className="col-12 col-md-4 form-group">
                 <label>Porcentaje de Sólidos Totales (%)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('ST_PORCENTUAL')}`}
                   name="ST_PORCENTUAL"
                   value={formData.ST_PORCENTUAL}
@@ -680,18 +720,20 @@ export const AnalisisEdit = ({
               <div className="col-12 col-md-4 form-group">
                 <label>Gramos de Sólidos Totales por litro (g/L)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('ST_KG')}`}
                   name="ST_KG"
                   value={formData.ST_KG}
-                  onChange={handleChange}
+                  readOnly
                 />
                 <small className="reference-text">{getReferenceText('ST_KG')}</small>
               </div>
               <div className="col-12 col-md-4 form-group">
                 <label>UREA (mg/L)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('UREA')}`}
                   name="UREA"
                   value={formData.UREA}
@@ -702,7 +744,8 @@ export const AnalisisEdit = ({
               <div className="col-12 col-md-4 form-group">
                 <label>Unidades Formadoras de Colonias (UFC)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('UFC')}`}
                   name="UFC"
                   value={formData.UFC}
@@ -713,7 +756,8 @@ export const AnalisisEdit = ({
               <div className="col-12 col-md-4 form-group">
                 <label>Celulas Somáticas</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className={`form-control ${getInputClass('CS')}`}
                   name="CS"
                   value={formData.CS}

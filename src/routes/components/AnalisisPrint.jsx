@@ -67,15 +67,15 @@ const AnalisisPrint = ({ analisis, userName, clientName }) => {
   // Campos centrales del análisis con rangos normales
   const centralFields = [
     { label: 'Porcentaje de Materia Grasa', value: analisis.MG_PORCENTUAL, normal: '3.3-4.0%', unit: '%' },
-    { label: 'Gramos de Materia Grasa por litro', value: analisis.MG_KG, normal: '33-40 gr/l', unit: 'gr/l' },
+    { label: 'Gramos de Materia Grasa', value: analisis.MG_KG, unit: 'gr' },
     { label: 'Porcentaje de Proteína', value: analisis.PROT_PORCENTUAL, normal: '3.0-3.5%', unit: '%' },
-    { label: 'Gramos de Proteína por litro', value: analisis.PROT_KG, normal: '30-35 gr/l', unit: 'gr/l' },
+    { label: 'Gramos de Proteína', value: analisis.PROT_KG, unit: 'gr' },
     { label: 'Porcentaje de Lactosa', value: analisis.LACT_PORCENTUAL, normal: '4.8-5.2%', unit: '%' },
-    { label: 'Gramos de Lactosa por litro', value: analisis.LACT_KG, normal: '48-52 gr/l', unit: 'gr/l' },
+    { label: 'Gramos de Lactosa', value: analisis.LACT_KG, unit: 'gr' },
     { label: 'Porcentaje de Sólidos No Grasos', value: analisis.SNG_PORCENTUAL, normal: '8.5-9.5%', unit: '%' },
-    { label: 'Gramos de Sólidos No Grasos por litro', value: analisis.SNG_KG, normal: '85-95 gr/l', unit: 'gr/l' },
+    { label: 'Gramos de Sólidos No Grasos', value: analisis.SNG_KG, unit: 'gr' },
     { label: 'Porcentaje de Sólidos Totales', value: analisis.ST_PORCENTUAL, normal: '12-13%', unit: '%' },
-    { label: 'Gramos de Sólidos Totales por litro', value: analisis.ST_KG, normal: '120-130 gr/l', unit: 'gr/l' },
+    { label: 'Gramos de Sólidos Totales', value: analisis.ST_KG, unit: 'gr' },
     { label: 'UREA', value: analisis.UREA, normal: '10-16 mg/dL', unit: 'mg/dL' },
     // Nuevos campos:
     { label: 'unidades formadoras de colonias (UFC)', value: analisis.UFC, normal: '50000-250000 UFC/ml', unit: 'UFC/ml' },
@@ -149,7 +149,7 @@ const AnalisisPrint = ({ analisis, userName, clientName }) => {
                   {field.unit && <span className="print-unit"> {field.unit}</span>}
                 </span>
               </div>
-              <div className="normal-range">(Normal: {field.normal})</div>
+              <div className="normal-range">{field.normal ? `Normal: ${field.normal}` : <br/> }</div>
             </div>
           </React.Fragment>
         ))}
